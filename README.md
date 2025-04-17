@@ -110,6 +110,11 @@ Sentiti libero di fare fork del repository e inviare pull request per migliorare
 
 Questo progetto è distribuito con licenza MIT.
 
+## ✅ TODO List
+- [ ] Build APK
+- [ ] Aggiungere possibilità di esportare i dati in PDF/Excel
+- [ ] In Dashboard aggiungere grafico a torta per favorire lettura
+
 ---
 
 Per domande o suggerimenti, apri un issue sul repository GitHub.
