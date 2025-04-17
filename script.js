@@ -359,6 +359,13 @@ function updateDashboard() {
     
     // Aggiorna valori
     document.getElementById('stipendio-value').textContent = formatCurrency(monthData.stipendio);
+    // Cambia testo del pulsante stipendio in base allo stato
+    const stipendioBtn = document.getElementById('add-stipendio');
+    if (monthData.stipendio > 0) {
+        stipendioBtn.textContent = 'Modifica';
+    } else {
+        stipendioBtn.textContent = 'Inserisci';
+    }
     document.getElementById('risparmi-value').textContent = formatCurrency(monthData.risparmio);
     
     // Calcola spese fisse da array globale
