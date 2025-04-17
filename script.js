@@ -658,59 +658,80 @@ function updateCategoriesManagementList() {
 // Funzioni form handler
 function handleStipendioSubmit(e) {
     e.preventDefault();
-    
+
     const stipendioAmount = parseFloat(document.getElementById('stipendio-amount').value);
     const risparmioAmount = parseFloat(document.getElementById('risparmio-amount').value);
-    
+
     if (isNaN(stipendioAmount) || isNaN(risparmioAmount)) {
         showToast('Inserisci valori validi');
         return;
     }
-    
+
     if (risparmioAmount > stipendioAmount) {
         showToast('Il risparmio non può essere maggiore dello stipendio');
         return;
     }
-    
+
     const monthKey = `${currentYear}-${currentMonth}`;
-    
-    // Calcola spendibili
-    const spendibili = stipendioAmount - risparmioAmount;
-    
+
+    // Memorizza gli spendibili attuali che derivano da entrate extra
+    const currentSpendibili = appData.months[monthKey].spendibili;
+
+    // Calcola spendibili dallo stipendio
+    const spendibiliFromStipendio = stipendioAmount - risparmioAmount;
+
+    // Se lo stipendio era già stato inserito prima, ottieni il vecchio valore
+    const oldStipendio = appData.months[monthKey].stipendio;
+    const oldRisparmio = appData.months[monthKey].risparmio;
+
+    // Se è una modifica, sottrai i vecchi valori
+    let spendibiliFinali = currentSpendibili;
+    if (oldStipendio > 0) {
+        // Se è una modifica, rimuovi il vecchio contributo dello stipendio agli spendibili
+        spendibiliFinali -= (oldStipendio - oldRisparmio);
+    }
+
+    // Aggiungi il nuovo contributo dello stipendio
+    spendibiliFinali += spendibiliFromStipendio;
+
     // Aggiorna dati mese
     appData.months[monthKey].stipendio = stipendioAmount;
     appData.months[monthKey].risparmio = risparmioAmount;
-    appData.months[monthKey].spendibili = spendibili;
-    
+    appData.months[monthKey].spendibili = spendibiliFinali;
+
     // Controlla se c'è un mese precedente con debiti
     const prevMonthKey = getPreviousMonthKey(monthKey);
     if (appData.months[prevMonthKey] && appData.months[prevMonthKey].debiti.length > 0) {
         const debitiTotale = appData.months[prevMonthKey].debiti.reduce((sum, debito) => sum + debito.amount, 0);
-        
+
         if (debitiTotale > 0) {
             // Sottrai dai spendibili
             appData.months[monthKey].spendibili -= debitiTotale;
-            
+
             // Aggiungi transazione
             addTransazione(
-                'Debiti dal mese precedente', 
-                debitiTotale, 
+                'Debiti dal mese precedente',
+                debitiTotale,
                 'uscita'
             );
-            
+
             showToast(`Sottratti ${formatCurrency(debitiTotale)} di debiti dal mese precedente`);
         }
     }
-    
+
     // Aggiungi transazione
-    addTransazione('Stipendio', stipendioAmount, 'entrata');
-    
+    if (oldStipendio > 0) {
+        addTransazione('Modifica stipendio', stipendioAmount, 'entrata');
+    } else {
+        addTransazione('Stipendio', stipendioAmount, 'entrata');
+    }
+
     // Salva e aggiorna
     saveData();
     updateDashboard();
     closeModal('modal-stipendio');
-    showToast('Stipendio registrato con successo');
-    
+    showToast(oldStipendio > 0 ? 'Stipendio modificato con successo' : 'Stipendio registrato con successo');
+
     // Reset form
     e.target.reset();
 }
