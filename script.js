@@ -381,20 +381,32 @@ function updateCategoriesUI() {
     // Aggiorna select categorie nei form
     const categoriesSelect = document.getElementById('spesa-categoria');
     categoriesSelect.innerHTML = '';
-    
+
     categories.forEach(category => {
         const option = document.createElement('option');
         option.value = category.id;
         option.textContent = category.name;
         categoriesSelect.appendChild(option);
     });
-    
+
     // Aggiorna chip filtro
     const categorieContainer = document.getElementById('categorie-container');
-    
-    // Mantieni chip "Tutte"
-    categorieContainer.innerHTML = '<div class="chip active" data-categoria="tutte">Tutte</div>';
-    
+
+    // Svuota il container completamente
+    categorieContainer.innerHTML = '';
+
+    // Aggiungi chip "Tutte"
+    const allChip = document.createElement('div');
+    allChip.className = 'chip active';
+    allChip.setAttribute('data-categoria', 'tutte');
+    allChip.textContent = 'Tutte';
+    allChip.addEventListener('click', function() {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        filterSpeseFisseByCategory('tutte');
+    });
+    categorieContainer.appendChild(allChip);
+
     // Aggiungi chip per ogni categoria
     categories.forEach(category => {
         const chip = document.createElement('div');
@@ -403,17 +415,14 @@ function updateCategoriesUI() {
         chip.textContent = category.name;
         chip.style.backgroundColor = category.color;
         chip.style.color = getContrastColor(category.color);
-        
+
         // Event listener per filtro
         chip.addEventListener('click', function() {
-            // Rimuovi active da tutti
             document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            // Aggiungi active a questo
             this.classList.add('active');
-            // Filtra lista
             filterSpeseFisseByCategory(this.getAttribute('data-categoria'));
         });
-        
+
         categorieContainer.appendChild(chip);
     });
 }
