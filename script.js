@@ -526,10 +526,10 @@ function updateTransazioniList() {
     const monthKey = `${currentYear}-${currentMonth}`;
     const monthData = appData.months[monthKey] || { transazioni: [] };
     const transazioniList = document.getElementById('transactions-list');
-    
+
     // Svuota lista
     transazioniList.innerHTML = '';
-    
+
     // Caso nessuna transazione
     if (monthData.transazioni.length === 0) {
         const noTransazioni = document.createElement('li');
@@ -540,14 +540,14 @@ function updateTransazioniList() {
     } else {
         // Ordina transazioni dalla più recente
         const sortedTransazioni = [...monthData.transazioni].sort((a, b) => new Date(b.date) - new Date(a.date));
-        
+
         // Popola lista
         sortedTransazioni.forEach((transazione, index) => {
             const li = document.createElement('li');
-            
+
             const date = new Date(transazione.date);
             const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
-            
+
             li.innerHTML = `
                 <div class="list-item-info">
                     <div class="list-item-name">${transazione.description}</div>
@@ -556,17 +556,9 @@ function updateTransazioniList() {
                 <div class="list-item-amount" style="color: ${transazione.type === 'entrata' ? 'var(--success-color)' : 'var(--danger-color)'}">
                     ${transazione.type === 'entrata' ? '+' : '-'}${formatCurrency(transazione.amount)}
                 </div>
-                <div class="list-item-actions">
-                    <button class="action-icon delete-transaction" data-index="${index}">🗑️</button>
-                </div>
             `;
-            
+
             transazioniList.appendChild(li);
-        });
-        
-        // Aggiungi listener per eliminazione
-        document.querySelectorAll('.delete-transaction').forEach(btn => {
-            btn.addEventListener('click', () => deleteTransaction(parseInt(btn.getAttribute('data-index'))));
         });
     }
 }
