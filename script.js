@@ -993,11 +993,10 @@ function deleteCategory(index) {
 // Funzioni di filtro e ordinamento
 function sortSpeseFisse() {
     const sortBy = document.getElementById('sort-select').value;
-    const monthKey = `${currentYear}-${currentMonth}`;
-    
+
     // Copia array per non modificare l'originale direttamente
-    const speseFisse = [...appData.months[monthKey].speseFisse];
-    
+    const speseFisse = [...appData.speseFisse];
+
     switch (sortBy) {
         case 'nome':
             speseFisse.sort((a, b) => a.name.localeCompare(b.name));
@@ -1013,10 +1012,13 @@ function sortSpeseFisse() {
             speseFisse.sort((a, b) => b.amount - a.amount);
             break;
     }
-    
+
     // Aggiorna array originale
-    appData.months[monthKey].speseFisse = speseFisse;
-    
+    appData.speseFisse = speseFisse;
+
+    // Salva i dati
+    saveData();
+
     // Aggiorna UI
     updateSpeseFisseList();
 }
