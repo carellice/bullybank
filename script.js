@@ -202,8 +202,14 @@ function setupEventListeners() {
     // Dashboard actions
     document.getElementById('add-stipendio').addEventListener('click', () => openModal('modal-stipendio'));
     document.getElementById('sottrai-spendibili').addEventListener('click', () => openModal('modal-sottrai'));
-    document.getElementById('add-entrata').addEventListener('click', () => openModal('modal-entrata'));
-    document.getElementById('add-debito').addEventListener('click', () => openModal('modal-debito'));
+    document.getElementById('manage-entrate').addEventListener('click', () => {
+        updateEntrateExtraList();
+        openModal('modal-gestione-entrate');
+    });
+    document.getElementById('manage-debiti').addEventListener('click', () => {
+        updateDebitiList();
+        openModal('modal-gestione-debiti');
+    });
     document.getElementById('aggiungi-spendibili').addEventListener('click', () => openModal('modal-aggiungi-spendibili'));
     
     // Spese fisse
@@ -257,6 +263,17 @@ function setupEventListeners() {
     document.getElementById('add-category-from-manage').addEventListener('click', () => {
         closeModal('modal-manage-categories');
         openModal('modal-categoria');
+    });
+
+    // Gestione nuove entrate/debiti dai modali
+    document.getElementById('add-entrata-from-list').addEventListener('click', () => {
+        closeModal('modal-gestione-entrate');
+        openModal('modal-entrata');
+    });
+
+    document.getElementById('add-debito-from-list').addEventListener('click', () => {
+        closeModal('modal-gestione-debiti');
+        openModal('modal-debito');
     });
 }
 
@@ -1291,4 +1308,148 @@ function getPreviousMonthKey(monthKey) {
     }
     
     return `${prevYear}-${prevMonth}`;
+}
+
+function updateEntrateExtraList() {
+    const monthKey = `${currentYear}-${currentMonth}`;
+    const monthData = appData.months[monthKey] || { entrateExtra: [] };
+    const entrateList = document.getElementById('entrate-extra-list');
+
+    // Svuota lista
+    entrateList.innerHTML = '';
+
+    // Caso nessuna entrata
+    if (!monthData.entrateExtra || monthData.entrateExtra.length === 0) {
+        const noEntrate = document.createElement('li');
+        noEntrate.textContent = 'Nessuna entrata extra per questo mese';
+        noEntrate.style.textAlign = 'center';
+        noEntrate.style.color = 'var(--text-secondary)';
+        entrateList.appendChild(noEntrate);
+        return;
+    }
+
+    // Popola lista
+    monthData.entrateExtra.forEach((entrata, index) => {
+        const li = document.createElement('li');
+
+        const date = new Date(entrata.date);
+        const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+
+        li.innerHTML = `
+            <div class="list-item-info">
+                <div class="list-item-name">${entrata.description}</div>
+                <div style="color: var(--text-secondary); font-size: 0.9rem;">${formattedDate}</div>
+            </div>
+            <div class="list-item-amount" style="color: var(--success-color)">
+                +${formatCurrency(entrata.amount)}
+            </div>
+            <div class="list-item-actions">
+                <button class="action-icon delete-entrata" data-index="${index}">🗑️</button>
+            </div>
+        `;
+
+        entrateList.appendChild(li);
+    });
+
+    // Aggiungi listener per eliminazione
+    document.querySelectorAll('.delete-entrata').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'));
+            deleteEntrataExtra(index);
+        });
+    });
+}
+
+function updateDebitiList() {
+    const monthKey = `${currentYear}-${currentMonth}`;
+    const monthData = appData.months[monthKey] || { debiti: [] };
+    const debitiList = document.getElementById('debiti-list');
+
+    // Svuota lista
+    debitiList.innerHTML = '';
+
+    // Caso nessun debito
+    if (!monthData.debiti || monthData.debiti.length === 0) {
+        const noDebiti = document.createElement('li');
+        noDebiti.textContent = 'Nessun debito per questo mese';
+        noDebiti.style.textAlign = 'center';
+        noDebiti.style.color = 'var(--text-secondary)';
+        debitiList.appendChild(noDebiti);
+        return;
+    }
+
+    // Popola lista
+    monthData.debiti.forEach((debito, index) => {
+        const li = document.createElement('li');
+
+        const date = new Date(debito.date);
+        const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+
+        li.innerHTML = `
+            <div class="list-item-info">
+                <div class="list-item-name">${debito.description}</div>
+                <div style="color: var(--text-secondary); font-size: 0.9rem;">${formattedDate}</div>
+            </div>
+            <div class="list-item-amount" style="color: var(--danger-color)">
+                -${formatCurrency(debito.amount)}
+            </div>
+            <div class="list-item-actions">
+                <button class="action-icon delete-debito" data-index="${index}">🗑️</button>
+            </div>
+        `;
+
+        debitiList.appendChild(li);
+    });
+
+    // Aggiungi listener per eliminazione
+    document.querySelectorAll('.delete-debito').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'));
+            deleteDebito(index);
+        });
+    });
+}
+
+function deleteEntrataExtra(index) {
+    const monthKey = `${currentYear}-${currentMonth}`;
+    const monthData = appData.months[monthKey];
+
+    if (!monthData || !monthData.entrateExtra || index >= monthData.entrateExtra.length) {
+        showToast('Errore: entrata non trovata');
+        return;
+    }
+
+    // Ottieni l'entrata da eliminare
+    const entrata = monthData.entrateExtra[index];
+
+    // Sottrai dagli spendibili
+    monthData.spendibili -= entrata.amount;
+
+    // Rimuovi entrata
+    monthData.entrateExtra.splice(index, 1);
+
+    // Salva e aggiorna
+    saveData();
+    updateEntrateExtraList();
+    updateDashboard();
+    showToast('Entrata extra eliminata');
+}
+
+function deleteDebito(index) {
+    const monthKey = `${currentYear}-${currentMonth}`;
+    const monthData = appData.months[monthKey];
+
+    if (!monthData || !monthData.debiti || index >= monthData.debiti.length) {
+        showToast('Errore: debito non trovato');
+        return;
+    }
+
+    // Rimuovi debito
+    monthData.debiti.splice(index, 1);
+
+    // Salva e aggiorna
+    saveData();
+    updateDebitiList();
+    updateDashboard();
+    showToast('Debito eliminato');
 }

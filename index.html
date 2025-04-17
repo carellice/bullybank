@@ -77,22 +77,22 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Card Entrate Extra -->
                     <div class="card">
                         <h3>Entrate Extra</h3>
                         <div class="card-content">
                             <p class="amount" id="entrate-extra-value">€0.00</p>
-                            <button class="action-btn" id="add-entrata">Aggiungi</button>
+                            <button class="action-btn" id="manage-entrate">Gestisci</button>
                         </div>
                     </div>
-                    
+
                     <!-- Card Debiti Auto -->
                     <div class="card">
-                        <h3>Auto-Debiti</h3>
+                        <h3>Auto-Debiti (Mese Prossimo)</h3>
                         <div class="card-content">
                             <p class="amount" id="debiti-value">€0.00</p>
-                            <button class="action-btn" id="add-debito">Aggiungi</button>
+                            <button class="action-btn" id="manage-debiti">Gestisci</button>
                         </div>
                     </div>
                     
@@ -439,6 +439,42 @@
                             <button type="submit" class="primary-btn">Salva</button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modale Gestione Entrate Extra -->
+        <div class="modal" id="modal-gestione-entrate">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Gestione Entrate Extra</h3>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <ul id="entrate-extra-list" class="list">
+                        <!-- Le entrate extra verranno generate dinamicamente -->
+                    </ul>
+                    <div class="form-group">
+                        <button class="primary-btn" id="add-entrata-from-list">+ Nuova Entrata</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modale Gestione Debiti -->
+        <div class="modal" id="modal-gestione-debiti">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Gestione Debiti</h3>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <ul id="debiti-list" class="list">
+                        <!-- I debiti verranno generati dinamicamente -->
+                    </ul>
+                    <div class="form-group">
+                        <button class="primary-btn" id="add-debito-from-list">+ Nuovo Debito</button>
+                    </div>
                 </div>
             </div>
         </div>
