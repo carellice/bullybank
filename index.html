@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="https://i.ibb.co/Nd1mmfK0/Minimalist-Material-Design-web-app-icon-featuring-a-stylized-bulldog-head-front-view-The-head-is-a.png" type="image/x-icon">
+    <title>BullyBank - Gestione Risparmi</title>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header con logo e switch tema -->
+        <header class="app-header">
+            <div class="logo-container">
+                <!-- <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjEyMCIgZmlsbD0iI2Y1ZjVmNSIvPjxlbGxpcHNlIGN4PSIxMjgiIGN5PSIxNDAiIHJ4PSI4MCIgcnk9IjcwIiBmaWxsPSIjZmFkMmQyIi8+PGNpcmNsZSBjeD0iOTAiIGN5PSIxMDAiIHI9IjE4IiBmaWxsPSIjNDQ0Ii8+PGNpcmNsZSBjeD0iMTY2IiBjeT0iMTAwIiByPSIxOCIgZmlsbD0iIzQ0NCIvPjxjaXJjbGUgY3g9IjkwIiBjeT0iMTAwIiByPSI2IiBmaWxsPSIjZmZmIi8+PGNpcmNsZSBjeD0iMTY2IiBjeT0iMTAwIiByPSI2IiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTEyOCwxNzBjLTIwLDAtMzYtOC0zNi04czgtMTYsMzYtMTZzMzYsMTYsMzYsMTZTMTQ4LDE3MCwxMjgsMTcwWiIgZmlsbD0iIzQ0NCIvPjxwYXRoIGQ9Ik04NSwxNDBjMCwwLTEwLDEwLTI1LDEwcy0yNSwtOC0yNSwtOHM1LC0xMCwyNSwtMTBTODUsMTQwLDg1LDE0MFoiIGZpbGw9IiNmYWQyZDIiLz48cGF0aCBkPSJNMTcxLDE0MGMwLDAsMTAsMTAsMjUsMTBzMjUsLTgsMjUsLThzLTUsLTEwLC0yNSwtMTBTMTcxLDE0MCwxNzEsMTQwWiIgZmlsbD0iI2ZhZDJkMiIvPjwvc3ZnPg==" alt="BullyBank Logo" class="logo"> -->
+                <img src="https://i.ibb.co/Nd1mmfK0/Minimalist-Material-Design-web-app-icon-featuring-a-stylized-bulldog-head-front-view-The-head-is-a.png" alt="BullyBank Logo" class="logo">
+                <h1>BullyBank</h1>
+            </div>
+            <div class="theme-toggle">
+                <label for="theme-switch">Tema</label>
+                <input type="checkbox" id="theme-switch" class="theme-switch">
+            </div>
+        </header>
+        
+        <!-- Navigazione tra le sezioni -->
+        <nav class="app-nav">
+            <ul>
+                <li><button class="nav-btn active" data-target="dashboard">Dashboard</button></li>
+                <li><button class="nav-btn" data-target="spese-fisse">Spese Fisse</button></li>
+                <li><button class="nav-btn" data-target="transazioni">Transazioni</button></li>
+                <li><button class="nav-btn" data-target="impostazioni">Impostazioni</button></li>
+            </ul>
+        </nav>
+        
+        <!-- Contenitore principale che cambia a seconda della sezione -->
+        <main class="app-content">
+            <!-- Sezione Dashboard -->
+            <section id="dashboard" class="section active">
+                <div class="dashboard-header">
+                    <!-- <h2>Riepilogo Mese: <span id="current-month"></span></h2> -->
+                    <h2><span id="current-month"></span></h2>
+                    <div class="month-selector">
+                        <button id="prev-month">&lt;</button>
+                        <button id="next-month">&gt;</button>
+                    </div>
+                </div>
+                
+                <div class="cards-container">
+                    <!-- Card Stipendio -->
+                    <div class="card">
+                        <h3>Stipendio</h3>
+                        <div class="card-content">
+                            <p class="amount" id="stipendio-value">€0.00</p>
+                            <button class="action-btn" id="add-stipendio">Inserisci</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Card Risparmi -->
+                    <div class="card">
+                        <h3>Risparmi</h3>
+                        <div class="card-content">
+                            <p class="amount" id="risparmi-value">€0.00</p>
+                            <div class="progress-bar">
+                                <div class="progress" id="risparmi-progress"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card Spendibili -->
+                    <div class="card">
+                        <h3>Spendibili</h3>
+                        <div class="card-content">
+                            <p class="amount" id="spendibili-value">€0.00</p>
+                            <div class="action-buttons">
+                                <button class="action-btn" id="sottrai-spendibili">Sottrai</button>
+                                <button class="action-btn" id="aggiungi-spendibili">Aggiungi</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card Entrate Extra -->
+                    <div class="card">
+                        <h3>Entrate Extra</h3>
+                        <div class="card-content">
+                            <p class="amount" id="entrate-extra-value">€0.00</p>
+                            <button class="action-btn" id="add-entrata">Aggiungi</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Card Debiti Auto -->
+                    <div class="card">
+                        <h3>Auto-Debiti</h3>
+                        <div class="card-content">
+                            <p class="amount" id="debiti-value">€0.00</p>
+                            <button class="action-btn" id="add-debito">Aggiungi</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Card Spese Fisse -->
+                    <div class="card">
+                        <h3>Spese Fisse</h3>
+                        <div class="card-content">
+                            <p class="amount" id="spese-fisse-value">€0.00</p>
+                            <!-- <button class="action-btn" data-target="spese-fisse">Gestisci</button> -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logo fluttuante -->
+                <div class="floating-logo-container">
+                    <img src="https://i.ibb.co/Nd1mmfK0/Minimalist-Material-Design-web-app-icon-featuring-a-stylized-bulldog-head-front-view-The-head-is-a.png" alt="Logo" class="floating-logo">
+                </div>
+            </section>
+            
+            <!-- Sezione Spese Fisse -->
+            <section id="spese-fisse" class="section">
+                <div class="section-header">
+                    <h2>Spese Fisse Mensili</h2>
+                    <div class="actions">
+                        <button class="primary-btn" id="add-spesa-fissa">+ Nuova Spesa</button>
+                        <div class="sort-container">
+                            <label for="sort-select">Ordina per:</label>
+                            <select id="sort-select">
+                                <option value="nome">Nome</option>
+                                <option value="categoria">Categoria</option>
+                                <option value="costo">Costo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="categorie-filtro">
+                    <label>Filtra per categoria:</label>
+                    <div id="categorie-container" class="chip-container">
+                        <!-- Le categorie verranno generate dinamicamente -->
+                        <div class="chip active" data-categoria="tutte">Tutte</div>
+                    </div>
+                    <button class="secondary-btn" id="add-categoria">+ Categoria</button>
+                </div>
+                
+                <div class="spese-list-container">
+                    <ul id="spese-fisse-list" class="list">
+                        <!-- Le spese fisse verranno generate dinamicamente -->
+                    </ul>
+                </div>
+                
+                <div class="totale-container">
+                    <h3>Totale Spese Fisse: <span id="totale-spese-fisse">€0.00</span></h3>
+                </div>
+                
+                <div class="categorie-summary">
+                    <h3>Totale per Categoria</h3>
+                    <ul id="categorie-summary-list" class="list">
+                        <!-- I totali per categoria verranno generati dinamicamente -->
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- Sezione Transazioni -->
+            <section id="transazioni" class="section">
+                <div class="section-header">
+                    <h2>Transazioni</h2>
+                    <div class="month-selector">
+                        <button id="prev-month-trans">&lt;</button>
+                        <span id="current-month-trans"></span>
+                        <button id="next-month-trans">&gt;</button>
+                    </div>
+                </div>
+                
+                <div class="transactions-container">
+                    <h3>Storico Transazioni</h3>
+                    <ul id="transactions-list" class="list">
+                        <!-- Le transazioni verranno generate dinamicamente -->
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- Sezione Impostazioni -->
+            <section id="impostazioni" class="section">
+                <div class="section-header">
+                    <h2>Impostazioni</h2>
+                </div>
+                
+                <div class="settings-container">
+                    <div class="settings-group">
+                        <h3>Backup e Ripristino</h3>
+                        <div class="settings-actions">
+                            <button class="primary-btn" id="export-data">Esporta Dati</button>
+                            <button class="primary-btn" id="import-data">Importa Dati</button>
+                            <input type="file" id="import-file" style="display: none">
+                        </div>
+                    </div>
+                    
+                    <div class="settings-group">
+                        <h3>Cancellazione Dati</h3>
+                        <div class="settings-actions">
+                            <button class="danger-btn" id="reset-data">Cancella Tutti i Dati</button>
+                        </div>
+                        <p class="warning-text">Attenzione: questa azione non può essere annullata!</p>
+                    </div>
+                    
+                    <div class="settings-group">
+                        <h3>Gestione Categorie</h3>
+                        <div class="settings-actions">
+                            <button class="primary-btn" id="manage-categories">Gestisci Categorie</button>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-group">
+                        <h3>Apparenza</h3>
+                        <div class="theme-selector">
+                            <label for="theme-select">Tema:</label>
+                            <select id="theme-select">
+                                <option value="light">Chiaro</option>
+                                <option value="dark">Scuro</option>
+                                <option value="auto">Auto (sistema)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer spostato qui -->
+                    <div class="app-footer settings-footer">
+                        <p>BullyBank &copy; 2025 - Il tuo assistente di risparmio</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Modali -->
+        <!-- Modale Inserimento Stipendio -->
+        <div class="modal" id="modal-stipendio">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Inserisci Stipendio</h3>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="stipendio-form">
+                        <div class="form-group">
+                            <label for="stipendio-amount">Importo Stipendio:</label>
+                            <input type="number" id="stipendio-amount" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="risparmio-amount">Quanto vuoi risparmiare:</label>
+                            <input type="number" id="risparmio-amount" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="primary-btn">Salva</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modale Sottrazione Spendibili -->
+        <div class="modal" id="modal-sottrai">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Sottrai Spendibili</h3>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="sottrai-form">
+                        <div class="form-group">
+                            <label for="sottrai-amount">Importo da sottrarre:</label>
+                            <input type="number" id="sottrai-amount" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sottrai-description">Descrizione (opzionale):</label>
+                            <input type="text" id="sottrai-description">
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="primary-btn">Salva</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modale Aggiunta Entrata Extra -->
+        <div class="modal" id="modal-entrata">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Aggiungi Entrata Extra</h3>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="entrata-form">
+                        <div class="form-group">
+                            <label for="entrata-amount">Importo entrata:</label>
+                            <input type="number" id="entrata-amount" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="entrata-description">Descrizione:</label>
+                            <input type="text" id="entrata-description" required>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="primary-btn">Salva</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modale Aggiunta Debito -->
+        <div class="modal" id="modal-debito">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Aggiungi Debito Auto</h3>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="debito-form">
+                        <div class="form-group">
+                            <label for="debito-amount">Importo debito:</label>
+                            <input type="number" id="debito-amount" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="debito-description">Descrizione:</label>
+                            <input type="text" id="debito-description" required>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="primary-btn">Salva</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modale Aggiunta Spesa Fissa -->
+        <div class="modal" id="modal-spesa-fissa">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Aggiungi Spesa Fissa</h3>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="spesa-fissa-form">
+                        <div class="form-group">
+                            <label for="spesa-nome">Nome:</label>
+                            <input type="text" id="spesa-nome" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="spesa-categoria">Categoria:</label>
+                            <select id="spesa-categoria" required>
+                                <!-- Le categorie verranno generate dinamicamente -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="spesa-amount">Importo:</label>
+                            <input type="number" id="spesa-amount" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="primary-btn">Salva</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modale Aggiunta Categoria -->
+        <div class="modal" id="modal-categoria">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Aggiungi Categoria</h3>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="categoria-form">
+                        <div class="form-group">
+                            <label for="categoria-nome">Nome Categoria:</label>
+                            <input type="text" id="categoria-nome" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="categoria-colore">Colore:</label>
+                            <input type="color" id="categoria-colore" value="#3498db">
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="primary-btn">Salva</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modale Gestione Categorie -->
+        <div class="modal" id="modal-manage-categories">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Gestione Categorie</h3>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <ul id="categories-management-list" class="list">
+                        <!-- Le categorie verranno generate dinamicamente -->
+                    </ul>
+                    <div class="form-group">
+                        <button id="add-category-from-manage" class="primary-btn">+ Aggiungi Categoria</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modale Conferma Reset -->
+        <div class="modal" id="modal-confirm-reset">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Conferma Cancellazione</h3>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Sei sicuro di voler cancellare tutti i dati? Questa azione non può essere annullata.</p>
+                    <div class="form-group buttons-group">
+                        <button class="secondary-btn" id="cancel-reset">Annulla</button>
+                        <button class="danger-btn" id="confirm-reset">Cancella Tutto</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modale Aggiunta Spendibili -->
+        <div class="modal" id="modal-aggiungi-spendibili">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Aggiungi Spendibili</h3>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="aggiungi-spendibili-form">
+                        <div class="form-group">
+                            <label for="aggiungi-amount">Importo da aggiungere:</label>
+                            <input type="number" id="aggiungi-amount" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="aggiungi-description">Descrizione (opzionale):</label>
+                            <input type="text" id="aggiungi-description">
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="primary-btn">Salva</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Toast di notifica -->
+        <div class="toast" id="toast-notification">
+            <span id="toast-message"></span>
+        </div>
+    </div>
+
+    <!-- Bottom Tab Bar per smartphone -->
+    <div class="bottom-tab-bar">
+        <button class="tab-btn active" data-target="dashboard">
+            <div class="tab-icon">📊</div>
+            <span>Dashboard</span>
+        </button>
+        <button class="tab-btn" data-target="spese-fisse">
+            <div class="tab-icon">📝</div>
+            <span>Spese</span>
+        </button>
+        <button class="tab-btn" data-target="transazioni">
+            <div class="tab-icon">💰</div>
+            <span>Transazioni</span>
+        </button>
+        <button class="tab-btn" data-target="impostazioni">
+            <div class="tab-icon">⚙️</div>
+            <span>Impostazioni</span>
+        </button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
