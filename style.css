@@ -812,8 +812,9 @@ body {
 
 .floating-logo {
     width: 100px;
-    height: 100px;
-    border-radius: 50%; 
+    /*width: 10%;*/
+    /*height: 100px;*/
+    border-radius: 50%;
     /* box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); */
     animation: floating 3s ease-in-out infinite;
 }
