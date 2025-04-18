@@ -199,8 +199,14 @@ function setupEventListeners() {
     document.getElementById('prev-month-trans').addEventListener('click', prevMonth);
     document.getElementById('next-month-trans').addEventListener('click', nextMonth);
     
+    document.getElementById('stipendio-amount').addEventListener('input', updateStipendioPreview);
+    document.getElementById('risparmio-amount').addEventListener('input', updateStipendioPreview);
+    
     // Dashboard actions
-    document.getElementById('add-stipendio').addEventListener('click', () => openModal('modal-stipendio'));
+    document.getElementById('add-stipendio').addEventListener('click', () => {
+        openModal('modal-stipendio');
+        updateStipendioPreview(); // Aggiorna l'anteprima all'apertura
+    });
     document.getElementById('sottrai-spendibili').addEventListener('click', () => openModal('modal-sottrai'));
     document.getElementById('manage-entrate').addEventListener('click', () => {
         updateEntrateExtraList();
@@ -1480,4 +1486,49 @@ function deleteDebito(index) {
     updateDebitiList();
     updateDashboard();
     showToast('Debito eliminato');
+}
+
+// Funzione per aggiornare l'anteprima
+function updateStipendioPreview() {
+    const stipendioAmount = parseFloat(document.getElementById('stipendio-amount').value) || 0;
+    const risparmioAmount = parseFloat(document.getElementById('risparmio-amount').value) || 0;
+    
+    // Calcola spendibili lordi (senza considerare spese fisse)
+    const spendibiliLordi = stipendioAmount - risparmioAmount;
+    
+    // Ottieni dati mese corrente
+    const monthKey = `${currentYear}-${currentMonth}`;
+    const monthData = appData.months[monthKey] || { entrateExtra: [], spendibili: 0 };
+    
+    // Calcola spese fisse
+    const speseFisseTotal = appData.speseFisse ? appData.speseFisse.reduce((sum, item) => sum + item.amount, 0) : 0;
+    
+    // Calcola entrate extra
+    const entrateExtraTotal = monthData.entrateExtra ? monthData.entrateExtra.reduce((sum, item) => sum + item.amount, 0) : 0;
+    
+    // Calcola debiti dal mese precedente
+    const prevMonthKey = getPreviousMonthKey(monthKey);
+    let debitiPrecedenti = 0;
+    
+    if (appData.months[prevMonthKey] && appData.months[prevMonthKey].debiti) {
+        debitiPrecedenti = appData.months[prevMonthKey].debiti.reduce((sum, debito) => sum + debito.amount, 0);
+    }
+    
+    // Calcola spendibili netti
+    const spendibiliNetti = spendibiliLordi + entrateExtraTotal - speseFisseTotal - debitiPrecedenti;
+    
+    // Aggiorna elementi UI
+    document.getElementById('preview-spendibili-lordi').textContent = formatCurrency(spendibiliLordi);
+    document.getElementById('preview-spese-fisse').textContent = formatCurrency(speseFisseTotal);
+    document.getElementById('preview-entrate-extra').textContent = formatCurrency(entrateExtraTotal);
+    document.getElementById('preview-debiti').textContent = formatCurrency(debitiPrecedenti);
+    document.getElementById('preview-spendibili-netti').textContent = formatCurrency(spendibiliNetti);
+    
+    // Cambia colore se spendibili sono negativi
+    const spendibiliElement = document.getElementById('preview-spendibili-netti');
+    if (spendibiliNetti < 0) {
+        spendibiliElement.style.color = 'var(--danger-color)';
+    } else {
+        spendibiliElement.style.color = 'var(--success-color)';
+    }
 }

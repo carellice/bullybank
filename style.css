@@ -944,3 +944,43 @@ body {
         margin-top: 10px;
     }
 }
+
+/* Stile per l'anteprima degli spendibili */
+.preview-container {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: var(--background-color);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.preview-container h4 {
+    margin-bottom: 10px;
+    color: var(--text-secondary);
+}
+
+.preview-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.preview-item:last-child {
+    border-bottom: none;
+    padding-top: 12px;
+    font-weight: 600;
+}
+
+.preview-item span:first-child {
+    color: var(--text-secondary);
+}
+
+.preview-item.total {
+    margin-top: 8px;
+    font-size: 1.1rem;
+}
+
+.preview-item.total span:last-child {
+    color: var(--primary-color);
+}
