@@ -244,6 +244,32 @@
                             <label for="risparmio-amount">Quanto vuoi risparmiare:</label>
                             <input type="number" id="risparmio-amount" step="0.01" min="0" required>
                         </div>
+                        
+                        <!-- Sezione anteprima spendibili -->
+                        <div class="preview-container">
+                            <h4>Anteprima</h4>
+                            <div class="preview-item">
+                                <span>Spendibili lordi:</span>
+                                <span id="preview-spendibili-lordi">€0.00</span>
+                            </div>
+                            <div class="preview-item">
+                                <span>Spese fisse:</span>
+                                <span id="preview-spese-fisse">€0.00</span>
+                            </div>
+                            <div class="preview-item">
+                                <span>Entrate extra:</span>
+                                <span id="preview-entrate-extra">€0.00</span>
+                            </div>
+                            <div class="preview-item">
+                                <span>Debiti mese precedente:</span>
+                                <span id="preview-debiti">€0.00</span>
+                            </div>
+                            <div class="preview-item total">
+                                <span>Spendibili netti:</span>
+                                <span id="preview-spendibili-netti">€0.00</span>
+                            </div>
+                        </div>
+                        
                         <div class="form-group">
                             <button type="submit" class="primary-btn">Salva</button>
                         </div>
