@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Aggiorna dashboard
     updateDashboard();
+
+    registerServiceWorker();
 });
 
 // Variabili globali
@@ -1541,5 +1543,19 @@ function updateStipendioPreview() {
         spendibiliElement.style.color = 'var(--danger-color)';
     } else {
         spendibiliElement.style.color = 'var(--success-color)';
+    }
+}
+
+// Registrazione del Service Worker (aggiungi alla fine del file script.js)
+function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(function(registration) {
+                    console.log('ServiceWorker registrato con successo: ', registration.scope);
+                }, function(err) {
+                    console.log('Registrazione ServiceWorker fallita: ', err);
+                });
+        });
     }
 }
