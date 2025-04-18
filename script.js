@@ -634,7 +634,7 @@ function deleteTransaction(index) {
 function updateCategoriesManagementList() {
     const categoriesList = document.getElementById('categories-management-list');
     categoriesList.innerHTML = '';
-    
+
     categories.forEach((category, index) => {
         const li = document.createElement('li');
         li.innerHTML = `
@@ -647,17 +647,23 @@ function updateCategoriesManagementList() {
                 <button class="action-icon delete-category" data-index="${index}">🗑️</button>
             </div>
         `;
-        
+
         categoriesList.appendChild(li);
     });
-    
-    // Aggiungi listeners
+
+    // Assicuriamoci che questi event listener funzionino correttamente
     document.querySelectorAll('.edit-category').forEach(btn => {
-        btn.addEventListener('click', () => editCategory(parseInt(btn.getAttribute('data-index'))));
+        btn.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'));
+            editCategory(index);
+        });
     });
-    
+
     document.querySelectorAll('.delete-category').forEach(btn => {
-        btn.addEventListener('click', () => deleteCategory(parseInt(btn.getAttribute('data-index'))));
+        btn.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'));
+            deleteCategory(index);
+        });
     });
 }
 
@@ -1019,22 +1025,27 @@ function deleteCategory(index) {
     // Controlla se ci sono spese con questa categoria
     const categoryId = categories[index].id;
     let categoryUsed = false;
-    
+
     // Controlla in tutti i mesi
     Object.keys(appData.months).forEach(monthKey => {
-        if (appData.months[monthKey].speseFisse.some(spesa => spesa.category === categoryId)) {
+        if (appData.months[monthKey].speseFisse && appData.months[monthKey].speseFisse.some(spesa => spesa.category === categoryId)) {
             categoryUsed = true;
         }
     });
-    
+
+    // Controlla anche nelle spese fisse globali
+    if (appData.speseFisse && appData.speseFisse.some(spesa => spesa.category === categoryId)) {
+        categoryUsed = true;
+    }
+
     if (categoryUsed) {
         showToast('Impossibile eliminare: categoria in uso');
         return;
     }
-    
+
     // Rimuovi categoria
     categories.splice(index, 1);
-    
+
     // Salva e aggiorna
     saveCategories();
     updateCategoriesUI();
