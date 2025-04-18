@@ -114,6 +114,7 @@ Questo progetto è distribuito con licenza MIT.
 - [ ] Build APK
 - [ ] Aggiungere possibilità di esportare i dati in PDF/Excel
 - [ ] In Dashboard aggiungere grafico a torta per favorire lettura
+- [ ] All'inserimeot dello stipendio possibilità di vedere un anteprima degli spendibili 
 
 ---
 
