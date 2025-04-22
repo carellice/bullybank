@@ -268,7 +268,7 @@
                             <label for="risparmio-amount">Quanto vuoi risparmiare:</label>
                             <input type="number" id="risparmio-amount" step="0.01" min="0" required>
                         </div>
-                        
+
                         <!-- Sezione anteprima spendibili -->
                         <div class="preview-container">
                             <h4>Anteprima</h4>
@@ -281,8 +281,8 @@
                                 <span id="preview-spese-fisse">€0.00</span>
                             </div>
                             <div class="preview-item">
-                                <span>Entrate extra:</span>
-                                <span id="preview-entrate-extra">€0.00</span>
+                                <span>Entrate extra (spendibili):</span>
+                                <span id="preview-entrate-extra-spendibili">€0.00</span>
                             </div>
                             <div class="preview-item">
                                 <span>Debiti mese precedente:</span>
@@ -291,6 +291,19 @@
                             <div class="preview-item total">
                                 <span>Spendibili netti:</span>
                                 <span id="preview-spendibili-netti">€0.00</span>
+                            </div>
+                            <div class="preview-separator"></div>
+                            <div class="preview-item">
+                                <span>Risparmio base:</span>
+                                <span id="preview-risparmio-base">€0.00</span>
+                            </div>
+                            <div class="preview-item">
+                                <span>Entrate extra (risparmi):</span>
+                                <span id="preview-entrate-extra-risparmi">€0.00</span>
+                            </div>
+                            <div class="preview-item total">
+                                <span>Risparmi totali:</span>
+                                <span id="preview-risparmi-totali">€0.00</span>
                             </div>
                         </div>
                         
@@ -326,7 +339,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Modale Aggiunta Entrata Extra -->
         <div class="modal" id="modal-entrata">
             <div class="modal-content">
@@ -343,6 +356,19 @@
                         <div class="form-group">
                             <label for="entrata-description">Descrizione:</label>
                             <input type="text" id="entrata-description" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Destinazione:</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="entrata-destination" value="spendibili" checked>
+                                    Spendibili
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="entrata-destination" value="risparmi">
+                                    Risparmi
+                                </label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <button type="submit" class="primary-btn">Salva</button>

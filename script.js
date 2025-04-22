@@ -696,30 +696,39 @@ function handleStipendioSubmit(e) {
 
     const monthKey = `${currentYear}-${currentMonth}`;
 
-    // Memorizza gli spendibili attuali che derivano da entrate extra
+    // Memorizza i valori attuali
     const currentSpendibili = appData.months[monthKey].spendibili;
+    const currentRisparmi = appData.months[monthKey].risparmio;
 
-    // Calcola spendibili dallo stipendio
+    // Calcola quanto degli spendibili attuali deriva da entrate extra
+    let extraSpendibili = 0;
+    let extraRisparmi = 0;
+
+    if (appData.months[monthKey].entrateExtra && appData.months[monthKey].entrateExtra.length > 0) {
+        appData.months[monthKey].entrateExtra.forEach(entrata => {
+            if (entrata.destination === 'risparmi') {
+                extraRisparmi += entrata.amount;
+            } else { // 'spendibili' o undefined (retrocompatibilità)
+                extraSpendibili += entrata.amount;
+            }
+        });
+    }
+
+    // Calcola valori dallo stipendio
     const spendibiliFromStipendio = stipendioAmount - risparmioAmount;
 
     // Se lo stipendio era già stato inserito prima, ottieni il vecchio valore
     const oldStipendio = appData.months[monthKey].stipendio;
     const oldRisparmio = appData.months[monthKey].risparmio;
 
-    // Se è una modifica, sottrai i vecchi valori
-    let spendibiliFinali = currentSpendibili;
-    if (oldStipendio > 0) {
-        // Se è una modifica, rimuovi il vecchio contributo dello stipendio agli spendibili
-        spendibiliFinali -= (oldStipendio - oldRisparmio);
-    }
-
-    // Aggiungi il nuovo contributo dello stipendio
-    spendibiliFinali += spendibiliFromStipendio;
+    // Calcola nuovi valori
+    const nuoviSpendibili = spendibiliFromStipendio + extraSpendibili;
+    const nuoviRisparmi = risparmioAmount + extraRisparmi;
 
     // Aggiorna dati mese
     appData.months[monthKey].stipendio = stipendioAmount;
-    appData.months[monthKey].risparmio = risparmioAmount;
-    appData.months[monthKey].spendibili = spendibiliFinali;
+    appData.months[monthKey].risparmio = nuoviRisparmi;
+    appData.months[monthKey].spendibili = nuoviSpendibili;
 
     // Controlla se c'è un mese precedente con debiti
     const prevMonthKey = getPreviousMonthKey(monthKey);
@@ -795,36 +804,42 @@ function handleSottraiSubmit(e) {
 
 function handleEntrataSubmit(e) {
     e.preventDefault();
-    
+
     const amount = parseFloat(document.getElementById('entrata-amount').value);
     const description = document.getElementById('entrata-description').value;
-    
+    const destination = document.querySelector('input[name="entrata-destination"]:checked').value;
+
     if (isNaN(amount) || amount <= 0 || !description) {
         showToast('Compila tutti i campi correttamente');
         return;
     }
-    
+
     const monthKey = `${currentYear}-${currentMonth}`;
-    
+
     // Aggiungi entrata extra
     appData.months[monthKey].entrateExtra.push({
         description: description,
         amount: amount,
+        destination: destination, // Salva la destinazione
         date: new Date().toISOString()
     });
 
-    // Aggiungi ai spendibili
-    appData.months[monthKey].spendibili += amount;
-    
+    // Aggiungi ai spendibili o ai risparmi in base alla scelta
+    if (destination === 'spendibili') {
+        appData.months[monthKey].spendibili += amount;
+    } else {
+        appData.months[monthKey].risparmio += amount;
+    }
+
     // Aggiungi transazione
     addTransazione(description, amount, 'entrata');
-    
+
     // Salva e aggiorna
     saveData();
     updateDashboard();
     closeModal('modal-entrata');
     showToast('Entrata extra aggiunta con successo');
-    
+
     // Reset form
     e.target.reset();
 }
@@ -1391,10 +1406,16 @@ function updateEntrateExtraList() {
         const date = new Date(entrata.date);
         const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
 
+        // Determina la destinazione (per retrocompatibilità)
+        const destination = entrata.destination || 'spendibili';
+        const destinationText = destination === 'spendibili' ? 'Spendibili' : 'Risparmi';
+
         li.innerHTML = `
             <div class="list-item-info">
                 <div class="list-item-name">${entrata.description}</div>
-                <div style="color: var(--text-secondary); font-size: 0.9rem;">${formattedDate}</div>
+                <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                    ${formattedDate} - Destinazione: ${destinationText}
+                </div>
             </div>
             <div class="list-item-amount" style="color: var(--success-color)">
                 +${formatCurrency(entrata.amount)}
@@ -1478,8 +1499,12 @@ function deleteEntrataExtra(index) {
     // Ottieni l'entrata da eliminare
     const entrata = monthData.entrateExtra[index];
 
-    // Sottrai dagli spendibili
-    monthData.spendibili -= entrata.amount;
+    // Sottrai dall'area corretta in base alla destinazione
+    if (entrata.destination === 'spendibili' || !entrata.destination) { // Per retrocompatibilità
+        monthData.spendibili -= entrata.amount;
+    } else {
+        monthData.risparmio -= entrata.amount;
+    }
 
     // Rimuovi entrata
     monthData.entrateExtra.splice(index, 1);
@@ -1514,38 +1539,56 @@ function deleteDebito(index) {
 function updateStipendioPreview() {
     const stipendioAmount = parseFloat(document.getElementById('stipendio-amount').value) || 0;
     const risparmioAmount = parseFloat(document.getElementById('risparmio-amount').value) || 0;
-    
+
     // Calcola spendibili lordi (senza considerare spese fisse)
     const spendibiliLordi = stipendioAmount - risparmioAmount;
-    
+
     // Ottieni dati mese corrente
     const monthKey = `${currentYear}-${currentMonth}`;
-    const monthData = appData.months[monthKey] || { entrateExtra: [], spendibili: 0 };
-    
+    const monthData = appData.months[monthKey] || { entrateExtra: [], spendibili: 0, risparmio: 0 };
+
     // Calcola spese fisse
     const speseFisseTotal = appData.speseFisse ? appData.speseFisse.reduce((sum, item) => sum + item.amount, 0) : 0;
-    
-    // Calcola entrate extra
-    const entrateExtraTotal = monthData.entrateExtra ? monthData.entrateExtra.reduce((sum, item) => sum + item.amount, 0) : 0;
-    
+
+    // Calcola entrate extra suddivise per destinazione
+    let entrateExtraSpendibili = 0;
+    let entrateExtraRisparmi = 0;
+
+    if (monthData.entrateExtra && monthData.entrateExtra.length > 0) {
+        monthData.entrateExtra.forEach(entrata => {
+            if (entrata.destination === 'risparmi') {
+                entrateExtraRisparmi += entrata.amount;
+            } else { // 'spendibili' o undefined (retrocompatibilità)
+                entrateExtraSpendibili += entrata.amount;
+            }
+        });
+    }
+
     // Calcola debiti dal mese precedente
     const prevMonthKey = getPreviousMonthKey(monthKey);
     let debitiPrecedenti = 0;
-    
+
     if (appData.months[prevMonthKey] && appData.months[prevMonthKey].debiti) {
         debitiPrecedenti = appData.months[prevMonthKey].debiti.reduce((sum, debito) => sum + debito.amount, 0);
     }
-    
-    // Calcola spendibili netti
-    const spendibiliNetti = spendibiliLordi + entrateExtraTotal - speseFisseTotal - debitiPrecedenti;
-    
+
+    // Calcola risparmi totali e spendibili netti
+    const risparmiTotali = risparmioAmount + entrateExtraRisparmi;
+    const spendibiliNetti = spendibiliLordi + entrateExtraSpendibili - speseFisseTotal - debitiPrecedenti;
+
     // Aggiorna elementi UI
     document.getElementById('preview-spendibili-lordi').textContent = formatCurrency(spendibiliLordi);
     document.getElementById('preview-spese-fisse').textContent = formatCurrency(speseFisseTotal);
-    document.getElementById('preview-entrate-extra').textContent = formatCurrency(entrateExtraTotal);
+    document.getElementById('preview-entrate-extra-spendibili').textContent = formatCurrency(entrateExtraSpendibili);
+    document.getElementById('preview-entrate-extra-risparmi').textContent = formatCurrency(entrateExtraRisparmi);
     document.getElementById('preview-debiti').textContent = formatCurrency(debitiPrecedenti);
     document.getElementById('preview-spendibili-netti').textContent = formatCurrency(spendibiliNetti);
-    
+
+    // Aggiungi questa riga qui, insieme agli altri aggiornamenti degli elementi UI
+    document.getElementById('preview-risparmio-base').textContent = formatCurrency(risparmioAmount);
+
+    document.getElementById('preview-risparmi-totali').textContent = formatCurrency(risparmiTotali);
+
     // Cambia colore se spendibili sono negativi
     const spendibiliElement = document.getElementById('preview-spendibili-netti');
     if (spendibiliNetti < 0) {
