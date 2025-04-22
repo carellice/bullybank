@@ -154,7 +154,7 @@ function saveCategories() {
 
 function initCurrentMonthData() {
     const monthKey = `${currentYear}-${currentMonth}`;
-    
+
     if (!appData.months[monthKey]) {
         appData.months[monthKey] = {
             stipendio: 0,
@@ -162,9 +162,10 @@ function initCurrentMonthData() {
             spendibili: 0,
             entrateExtra: [],
             debiti: [],
-            transazioni: []
+            transazioni: [],
+            note: "" // Aggiungi campo per le note
         };
-        
+
         saveData();
     }
 }
@@ -283,6 +284,10 @@ function setupEventListeners() {
         closeModal('modal-gestione-debiti');
         openModal('modal-debito');
     });
+
+    // Note mensili
+    document.getElementById('edit-note').addEventListener('click', () => openNoteModal());
+    document.getElementById('note-form').addEventListener('submit', handleNoteSubmit);
 }
 
 // Funzioni di navigazione
@@ -407,6 +412,9 @@ function updateDashboard() {
     } else {
         document.getElementById('risparmi-progress').style.width = '0%';
     }
+
+    // Aggiorna anteprima note
+    updateNotePreview();
 }
 
 function updateCategoriesUI() {
@@ -1179,7 +1187,8 @@ function exportData() {
         // Crea link e simula click
         const a = document.createElement('a');
         a.href = url;
-        a.download = `bullybank_backup_${formatDateForFilename()}.bbk`;
+        // a.download = `bullybank_backup_${formatDateForFilename()}.bbk`;
+        a.download = `bullybank_backup_${formatDateForFilename()}.txt`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -1557,5 +1566,46 @@ function registerServiceWorker() {
                     console.log('Registrazione ServiceWorker fallita: ', err);
                 });
         });
+    }
+}
+
+// Funzione per aprire il modale delle note
+function openNoteModal() {
+    const monthKey = `${currentYear}-${currentMonth}`;
+    const note = appData.months[monthKey].note || "";
+
+    document.getElementById('note-text').value = note;
+    openModal('modal-note');
+}
+
+// Funzione per gestire il salvataggio delle note
+function handleNoteSubmit(e) {
+    e.preventDefault();
+
+    const monthKey = `${currentYear}-${currentMonth}`;
+    const noteText = document.getElementById('note-text').value;
+
+    // Salva la nota
+    appData.months[monthKey].note = noteText;
+
+    // Aggiorna UI e salva
+    updateNotePreview();
+    saveData();
+    closeModal('modal-note');
+    showToast('Nota salvata');
+}
+
+// Funzione per aggiornare l'anteprima della nota nella dashboard
+function updateNotePreview() {
+    const monthKey = `${currentYear}-${currentMonth}`;
+    const notePreview = document.getElementById('note-preview');
+    const note = appData.months[monthKey].note || "";
+
+    if (note.trim() === "") {
+        notePreview.textContent = "Nessuna nota per questo mese";
+        notePreview.classList.remove('has-content');
+    } else {
+        notePreview.textContent = note;
+        notePreview.classList.add('has-content');
     }
 }

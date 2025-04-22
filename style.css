@@ -308,7 +308,7 @@ body {
 
 .cards-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(6, 1fr);
     gap: 20px;
     margin-bottom: 30px;
 }
@@ -491,11 +491,26 @@ body {
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.2s;
+    border: 2px solid transparent; /* Aggiungi bordo trasparente di default */
 }
 
 .chip.active {
     background-color: var(--primary-color);
     color: white;
+    border: 2px solid var(--primary-color); /* Stesso colore di sfondo per ora */
+    box-shadow: 0 2px 8px rgba(var(--primary-color-rgb), 0.4); /* Ombra leggera */
+}
+
+/* Stile aggiuntivo quando una chip è attiva in tema scuro */
+.dark-theme .chip.active {
+    border: 2px solid white; /* Bordo bianco per contrasto in tema scuro */
+}
+
+/* Stile per migliorare l'interazione visiva */
+.chip:hover:not(.active) {
+    transform: translateY(-2px);
+    background-color: var(--border-color);
+    border: 2px solid var(--text-secondary); /* Bordo visibile sull'hover */
 }
 
 .list {
@@ -877,9 +892,28 @@ body {
 }
 
 /* Responsive design */
+@media (max-width: 1024px) {
+    .cards-container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .card.primary-card, .card.secondary-card {
+        grid-column: span 2;
+    }
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
     .cards-container {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .card.primary-card {
+        grid-column: 1 / -1;  /* Occupa tutta la larghezza su schermi piccoli */
+    }
+
+    .card.secondary-card {
+        grid-column: span 1;
     }
     
     .section-header {
@@ -943,6 +977,14 @@ body {
     .list-item-actions {
         margin-top: 10px;
     }
+
+    .cards-container {
+        grid-template-columns: 1fr;
+    }
+
+    .card.primary-card, .card.secondary-card {
+        grid-column: 1;
+    }
 }
 
 /* Stile per l'anteprima degli spendibili */
@@ -983,4 +1025,136 @@ body {
 
 .preview-item.total span:last-child {
     color: var(--primary-color);
+}
+
+/* Card principali (stipendio, risparmi, spendibili) */
+.card.primary-card {
+    grid-column: span 2;  /* Occupa 2 colonne invece di 1 */
+    background-color: var(--card-background);
+    box-shadow: 0 8px 20px var(--shadow-color);
+    border: 1px solid var(--border-color);
+}
+
+/* Animazione leggera per card principali all'hover */
+.card.primary-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px var(--shadow-color);
+}
+
+/* Stile per titoli delle card principali */
+.card.primary-card h3 {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+    margin-bottom: 18px;
+}
+
+/* Stile per l'importo nelle card principali */
+.card.primary-card .amount {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Card secondarie */
+.card.secondary-card {
+    grid-column: span 2;
+}
+
+/* Note mensili */
+.note-preview {
+    background-color: var(--background-color);
+    padding: 10px;
+    border-radius: var(--button-border-radius);
+    border: 1px solid var(--border-color);
+    min-height: 60px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.note-preview.has-content {
+    color: var(--text-primary);
+}
+
+/* Stile per il textarea nel modale */
+#note-text {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: var(--button-border-radius);
+    border: 1px solid var(--border-color);
+    background-color: var(--card-background);
+    color: var(--text-primary);
+    font-size: 1rem;
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* Stile post-it per la card delle note mensili */
+.card.note-card {
+    background-color: #FFEB3B; /* Colore giallo tipico dei post-it */
+    border: none;
+    position: relative;
+    box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.1);
+    transform: rotate(1deg); /* Leggera rotazione per sembrare più naturale */
+}
+
+/* Versione dark del post-it */
+.dark-theme .card.note-card {
+    background-color: #FDD835; /* Giallo leggermente più scuro per tema dark */
+    color: #000; /* Testo scuro sul post-it anche in tema dark */
+}
+
+/* Effetto angolo piegato del post-it */
+.card.note-card:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-width: 0 20px 20px 0;
+    border-style: solid;
+    border-color: #E0D030 #fff; /* Colore dell'angolo piegato */
+    box-shadow: -2px 2px 5px rgba(0, 0, 0, 0.1);
+    transform: rotate(0deg);
+}
+
+.dark-theme .card.note-card:before {
+    border-color: #D4B82C var(--background-color); /* Adatta il colore al tema scuro */
+}
+
+/* Stile del titolo per il post-it */
+.card.note-card h3 {
+    color: #5D4037; /* Marrone scuro per il titolo */
+    font-family: 'Comic Sans MS', cursive, sans-serif; /* Font stile scrittura a mano */
+    border-bottom: 1px dashed #BA9C77;
+}
+
+/* Modifica il contenuto del post-it */
+.card.note-card .note-preview {
+    background-color: transparent;
+    border: none;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    color: #5D4037; /* Marrone scuro per il testo */
+    min-height: 80px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.card.note-card .note-preview.has-content {
+    color: #5D4037; /* Mantieni il colore anche quando ci sono contenuti */
+}
+
+/* Stile bottone sul post-it */
+.card.note-card .action-btn {
+    background-color: #FFC107; /* Colore ambra per il bottone */
+    color: #5D4037;
+    border: 1px solid #FFA000;
+}
+
+.card.note-card .action-btn:hover {
+    background-color: #FFA000;
 }

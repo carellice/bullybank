@@ -53,16 +53,16 @@
                 
                 <div class="cards-container">
                     <!-- Card Stipendio -->
-                    <div class="card">
+                    <div class="card primary-card">
                         <h3>Stipendio</h3>
                         <div class="card-content">
                             <p class="amount" id="stipendio-value">€0.00</p>
                             <button class="action-btn" id="add-stipendio">Inserisci</button>
                         </div>
                     </div>
-                    
+
                     <!-- Card Risparmi -->
-                    <div class="card">
+                    <div class="card primary-card">
                         <h3>Risparmi</h3>
                         <div class="card-content">
                             <p class="amount" id="risparmi-value">€0.00</p>
@@ -71,9 +71,9 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Card Spendibili -->
-                    <div class="card">
+                    <div class="card primary-card">
                         <h3>Spendibili</h3>
                         <div class="card-content">
                             <p class="amount" id="spendibili-value">€0.00</p>
@@ -85,7 +85,7 @@
                     </div>
 
                     <!-- Card Entrate Extra -->
-                    <div class="card">
+                    <div class="card secondary-card">
                         <h3>Entrate Extra</h3>
                         <div class="card-content">
                             <p class="amount" id="entrate-extra-value">€0.00</p>
@@ -94,20 +94,38 @@
                     </div>
 
                     <!-- Card Debiti Auto -->
-                    <div class="card">
-                        <h3>Auto-Debiti (Mese Prossimo)</h3>
+                    <div class="card secondary-card">
+                        <h3>Debiti Auto</h3>
                         <div class="card-content">
                             <p class="amount" id="debiti-value">€0.00</p>
                             <button class="action-btn" id="manage-debiti">Gestisci</button>
                         </div>
                     </div>
-                    
+
                     <!-- Card Spese Fisse -->
-                    <div class="card">
+                    <div class="card secondary-card">
                         <h3>Spese Fisse</h3>
                         <div class="card-content">
                             <p class="amount" id="spese-fisse-value">€0.00</p>
-                            <!-- <button class="action-btn" data-target="spese-fisse">Gestisci</button> -->
+                            <button class="action-btn" data-target="spese-fisse">Gestisci</button>
+                        </div>
+                    </div>
+
+                    <!-- Card Note Mensili -->
+<!--                    <div class="card">-->
+<!--                        <h3>Note Mensili</h3>-->
+<!--                        <div class="card-content">-->
+<!--                            <div class="note-preview" id="note-preview">Nessuna nota per questo mese</div>-->
+<!--                            <button class="action-btn" id="edit-note">Modifica</button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+                    <!-- Card Note Mensili (stile post-it) -->
+                    <div class="card note-card">
+                        <h3>Note Mensili</h3>
+                        <div class="card-content">
+                            <div class="note-preview" id="note-preview">Nessuna nota per questo mese</div>
+                            <button class="action-btn" id="edit-note">Modifica</button>
                         </div>
                     </div>
                 </div>
@@ -507,6 +525,27 @@
                     <div class="form-group">
                         <button class="primary-btn" id="add-debito-from-list">+ Nuovo Debito</button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modale Note Mensili -->
+        <div class="modal" id="modal-note">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Note Mensili</h3>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="note-form">
+                        <div class="form-group">
+                            <label for="note-text">Inserisci le tue note per questo mese:</label>
+                            <textarea id="note-text" rows="6" placeholder="Es: Obiettivi, promemoria, appunti..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="primary-btn">Salva</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
