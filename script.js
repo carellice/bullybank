@@ -518,7 +518,11 @@ function updateCategoriesUI() {
     const categoriesSelect = document.getElementById('spesa-categoria');
     categoriesSelect.innerHTML = '';
 
-    categories.forEach(category => {
+    // Crea una copia ordinata delle categorie
+    const sortedCategories = [...categories].sort((a, b) => a.name.localeCompare(b.name));
+
+    // Aggiungi le categorie ordinate alfabeticamente
+    sortedCategories.forEach(category => {
         const option = document.createElement('option');
         option.value = category.id;
         option.textContent = category.name;
