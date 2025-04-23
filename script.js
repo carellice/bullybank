@@ -1041,50 +1041,56 @@ function handleSpesaFissaSubmit(e) {
 
 function handleCategoriaSubmit(e) {
     e.preventDefault();
-    
+
     const nome = document.getElementById('categoria-nome').value;
     const colore = document.getElementById('categoria-colore').value;
-    
+
     if (!nome || !colore) {
         showToast('Compila tutti i campi');
         return;
     }
-    
+
+    // Blocca la creazione di una categoria "Tutte"
+    if (nome.toLowerCase() === 'tutte') {
+        showToast('Non è possibile creare una categoria "Tutte"');
+        return;
+    }
+
     // Controlla se stiamo modificando una categoria esistente
-    const editIndex = e.target.hasAttribute('data-edit-index') ? 
-                      parseInt(e.target.getAttribute('data-edit-index')) : -1;
-    
+    const editIndex = e.target.hasAttribute('data-edit-index') ?
+        parseInt(e.target.getAttribute('data-edit-index')) : -1;
+
     if (editIndex >= 0) {
         // Modifica categoria esistente
         categories[editIndex].name = nome;
         categories[editIndex].color = colore;
-        
+
         showToast('Categoria aggiornata');
     } else {
         // Crea nuova categoria
         const categoryId = nome.toLowerCase().replace(/\s+/g, '-');
-        
+
         // Verifica se esiste già
         if (categories.some(cat => cat.id === categoryId)) {
             showToast('Esiste già una categoria con questo nome');
             return;
         }
-        
+
         // Aggiungi categoria
         categories.push({
             id: categoryId,
             name: nome,
             color: colore
         });
-        
+
         showToast('Categoria aggiunta');
     }
-    
+
     // Salva e aggiorna
     saveCategories();
     updateCategoriesUI();
     closeModal('modal-categoria');
-    
+
     // Reset form e rimuovi attributo data-edit-index
     e.target.removeAttribute('data-edit-index');
     e.target.reset();
