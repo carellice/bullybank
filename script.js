@@ -1332,45 +1332,49 @@ function importData(e) {
     if (!file) return;
     
     const reader = new FileReader();
-    
-    reader.onload = function(event) {
-        try {
-            // Leggi e decifra i dati
-            const encryptedData = event.target.result;
-            const jsonStr = atob(encryptedData);
-            const importedData = JSON.parse(jsonStr);
-            
-            // Verifica versione
-            if (!importedData.version) {
-                throw new Error('Formato file non valido');
+
+    if(file.name.startsWith("bullybank_backup")){
+        reader.onload = function(event) {
+            try {
+                // Leggi e decifra i dati
+                const encryptedData = event.target.result;
+                const jsonStr = atob(encryptedData);
+                const importedData = JSON.parse(jsonStr);
+
+                // Verifica versione
+                if (!importedData.version) {
+                    throw new Error('Formato file non valido');
+                }
+
+                // Importa dati
+                appData = importedData.appData;
+                categories = importedData.categories;
+
+                // Salva e aggiorna
+                saveData();
+                saveCategories();
+
+                // Resetta il file input
+                document.getElementById('import-file').value = '';
+
+                // Aggiorna interfaccia
+                updateCategoriesUI();
+                updateMonthUI();
+                updateDashboard();
+                updateSpeseFisseList();
+                updateTransazioniList();
+
+                showToast('Dati importati con successo');
+            } catch (error) {
+                console.error('Errore nell\'importazione dei dati:', error);
+                showToast('Errore nell\'importazione dei dati');
             }
-            
-            // Importa dati
-            appData = importedData.appData;
-            categories = importedData.categories;
-            
-            // Salva e aggiorna
-            saveData();
-            saveCategories();
-            
-            // Resetta il file input
-            document.getElementById('import-file').value = '';
-            
-            // Aggiorna interfaccia
-            updateCategoriesUI();
-            updateMonthUI();
-            updateDashboard();
-            updateSpeseFisseList();
-            updateTransazioniList();
-            
-            showToast('Dati importati con successo');
-        } catch (error) {
-            console.error('Errore nell\'importazione dei dati:', error);
-            showToast('Errore nell\'importazione dei dati');
-        }
-    };
-    
-    reader.readAsText(file);
+        };
+
+        reader.readAsText(file);
+    }else{
+        showToast('File errato');
+    }
 }
 
 function resetData() {
