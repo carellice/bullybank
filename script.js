@@ -1,3 +1,6 @@
+// Variabile per tenere traccia dello stato privacy
+let privacyMode = false;
+
 // Inizializzazione app
 document.addEventListener('DOMContentLoaded', function() {
     // Impostazione tema
@@ -104,6 +107,9 @@ function initApp() {
         appData.speseFisse = [];
         saveData();
     }
+
+    // Inizializza la modalità privacy
+    initPrivacy();
     
     // Aggiorna visualizzazione categorie
     updateCategoriesUI();
@@ -132,6 +138,91 @@ function loadData() {
         console.error('Errore nel caricamento dei dati:', error);
         showToast('Errore nel caricamento dei dati');
     }
+}
+
+// Funzione per gestire il toggle privacy
+function togglePrivacy() {
+    privacyMode = !privacyMode;
+
+    // Salva la preferenza nel localStorage
+    localStorage.setItem('bullybank-privacy-mode', privacyMode ? 'true' : 'false');
+
+    // Se stiamo disattivando la modalità privacy, aggiorna la dashboard
+    if (!privacyMode) {
+        // Prima rimuovi la classe censored da tutti gli elementi
+        document.querySelectorAll('.amount, .list-item-amount').forEach(el => {
+            el.classList.remove('censored');
+            el.removeAttribute('data-original-text');
+        });
+
+        // Poi aggiorna completamente la visualizzazione dei dati
+        updateDashboard();
+
+        // Se siamo nella sezione spese fisse, aggiorna anche quella
+        if (document.getElementById('spese-fisse').classList.contains('active')) {
+            updateSpeseFisseList();
+        }
+
+        // Se siamo nella sezione transazioni, aggiorna anche quella
+        if (document.getElementById('transazioni').classList.contains('active')) {
+            updateTransazioniList();
+        }
+        
+        updatePrivacyUI();
+    } else {
+        // Se stiamo attivando la modalità privacy, applica la censura
+        updatePrivacyUI();
+    }
+}
+
+// Funzione per applicare lo stato privacy alla UI
+function updatePrivacyUI() {
+    // Aggiorna il pulsante
+    const privacyToggle = document.getElementById('privacy-toggle');
+    const privacyIcon = privacyToggle.querySelector('.privacy-icon');
+
+    if (privacyMode) {
+        privacyToggle.classList.add('active');
+        privacyIcon.textContent = '🔒';
+    } else {
+        privacyToggle.classList.remove('active');
+        privacyIcon.textContent = '👁️';
+    }
+
+    // Aggiorna tutti gli elementi con classe amount
+    const amountElements = document.querySelectorAll('.amount, .list-item-amount');
+    amountElements.forEach(el => {
+        if (privacyMode) {
+            // Salva il testo originale se non è già stato salvato
+            if (!el.hasAttribute('data-original-text')) {
+                el.setAttribute('data-original-text', el.textContent);
+            }
+            el.classList.add('censored');
+            // Nascondi il testo originale
+            el.innerHTML = '<span>' + el.textContent + '</span>';
+        } else {
+            // Ripristina il testo originale
+            if (el.hasAttribute('data-original-text')) {
+                el.textContent = el.getAttribute('data-original-text');
+            }
+            el.classList.remove('censored');
+        }
+    });
+}
+
+// Inizializzazione della modalità privacy
+function initPrivacy() {
+    // Carica la preferenza dal localStorage
+    const savedPrivacy = localStorage.getItem('bullybank-privacy-mode');
+    if (savedPrivacy === 'true') {
+        privacyMode = true;
+    }
+
+    // Aggiungi event listener al pulsante
+    document.getElementById('privacy-toggle').addEventListener('click', togglePrivacy);
+
+    // Applica stato iniziale
+    updatePrivacyUI();
 }
 
 function saveData() {
@@ -413,6 +504,11 @@ function updateDashboard() {
         document.getElementById('risparmi-progress').style.width = '0%';
     }
 
+    // Dopo aver aggiornato tutti i valori, riapplica la censura se necessario
+    if (privacyMode) {
+        updatePrivacyUI();
+    }
+
     // Aggiorna anteprima note
     updateNotePreview();
 }
@@ -519,6 +615,11 @@ function updateSpeseFisseList() {
     
     // Aggiorna totali per categoria
     updateCategorieTotals(appData.speseFisse);
+
+    // Dopo aver aggiornato tutti i valori, riapplica la censura se necessario
+    if (privacyMode) {
+        updatePrivacyUI();
+    }
 }
 
 function updateCategorieTotals(speseFisse) {
@@ -560,6 +661,11 @@ function updateCategorieTotals(speseFisse) {
             categoriesList.appendChild(li);
         });
     }
+
+    // Dopo aver aggiornato tutti i valori, riapplica la censura se necessario
+    if (privacyMode) {
+        updatePrivacyUI();
+    }
 }
 
 function updateTransazioniList() {
@@ -600,6 +706,11 @@ function updateTransazioniList() {
 
             transazioniList.appendChild(li);
         });
+    }
+
+    // Dopo aver aggiornato tutti i valori, riapplica la censura se necessario
+    if (privacyMode) {
+        updatePrivacyUI();
     }
 }
 
@@ -1435,6 +1546,11 @@ function updateEntrateExtraList() {
             deleteEntrataExtra(index);
         });
     });
+
+    // Dopo aver aggiornato tutti i valori, riapplica la censura se necessario
+    if (privacyMode) {
+        updatePrivacyUI();
+    }
 }
 
 function updateDebitiList() {
@@ -1485,6 +1601,11 @@ function updateDebitiList() {
             deleteDebito(index);
         });
     });
+
+    // Dopo aver aggiornato tutti i valori, riapplica la censura se necessario
+    if (privacyMode) {
+        updatePrivacyUI();
+    }
 }
 
 function deleteEntrataExtra(index) {
@@ -1595,6 +1716,11 @@ function updateStipendioPreview() {
         spendibiliElement.style.color = 'var(--danger-color)';
     } else {
         spendibiliElement.style.color = 'var(--success-color)';
+    }
+
+    // Dopo aver aggiornato tutti i valori, riapplica la censura se necessario
+    if (privacyMode) {
+        updatePrivacyUI();
     }
 }
 

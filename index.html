@@ -16,17 +16,32 @@
 <body>
     <div class="app-container">
         <!-- Header con logo e switch tema -->
-        <header class="app-header">
+        <div class="app-header">
             <div class="logo-container">
-                <!-- <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjEyMCIgZmlsbD0iI2Y1ZjVmNSIvPjxlbGxpcHNlIGN4PSIxMjgiIGN5PSIxNDAiIHJ4PSI4MCIgcnk9IjcwIiBmaWxsPSIjZmFkMmQyIi8+PGNpcmNsZSBjeD0iOTAiIGN5PSIxMDAiIHI9IjE4IiBmaWxsPSIjNDQ0Ii8+PGNpcmNsZSBjeD0iMTY2IiBjeT0iMTAwIiByPSIxOCIgZmlsbD0iIzQ0NCIvPjxjaXJjbGUgY3g9IjkwIiBjeT0iMTAwIiByPSI2IiBmaWxsPSIjZmZmIi8+PGNpcmNsZSBjeD0iMTY2IiBjeT0iMTAwIiByPSI2IiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTEyOCwxNzBjLTIwLDAtMzYtOC0zNi04czgtMTYsMzYtMTZzMzYsMTYsMzYsMTZTMTQ4LDE3MCwxMjgsMTcwWiIgZmlsbD0iIzQ0NCIvPjxwYXRoIGQ9Ik04NSwxNDBjMCwwLTEwLDEwLTI1LDEwcy0yNSwtOC0yNSwtOHM1LC0xMCwyNSwtMTBTODUsMTQwLDg1LDE0MFoiIGZpbGw9IiNmYWQyZDIiLz48cGF0aCBkPSJNMTcxLDE0MGMwLDAsMTAsMTAsMjUsMTBzMjUsLTgsMjUsLThzLTUsLTEwLC0yNSwtMTBTMTcxLDE0MCwxNzEsMTQwWiIgZmlsbD0iI2ZhZDJkMiIvPjwvc3ZnPg==" alt="BullyBank Logo" class="logo"> -->
                 <img src="https://i.ibb.co/Nd1mmfK0/Minimalist-Material-Design-web-app-icon-featuring-a-stylized-bulldog-head-front-view-The-head-is-a.png" alt="BullyBank Logo" class="logo">
                 <h1>BullyBank</h1>
             </div>
-            <div class="theme-toggle">
-                <label for="theme-switch">Tema</label>
-                <input type="checkbox" id="theme-switch" class="theme-switch">
+            <div class="header-actions">
+                <button id="privacy-toggle" class="privacy-toggle" title="Nascondi/Mostra importi">
+                    <span class="privacy-icon">👁️</span>
+                </button>
+                <div class="theme-toggle">
+                    <label for="theme-switch">Tema</label>
+                    <input type="checkbox" id="theme-switch" class="theme-switch">
+                </div>
             </div>
-        </header>
+        </div>
+<!--        <header class="app-header">-->
+<!--            <div class="logo-container">-->
+<!--                 <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjEyMCIgZmlsbD0iI2Y1ZjVmNSIvPjxlbGxpcHNlIGN4PSIxMjgiIGN5PSIxNDAiIHJ4PSI4MCIgcnk9IjcwIiBmaWxsPSIjZmFkMmQyIi8+PGNpcmNsZSBjeD0iOTAiIGN5PSIxMDAiIHI9IjE4IiBmaWxsPSIjNDQ0Ii8+PGNpcmNsZSBjeD0iMTY2IiBjeT0iMTAwIiByPSIxOCIgZmlsbD0iIzQ0NCIvPjxjaXJjbGUgY3g9IjkwIiBjeT0iMTAwIiByPSI2IiBmaWxsPSIjZmZmIi8+PGNpcmNsZSBjeD0iMTY2IiBjeT0iMTAwIiByPSI2IiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTEyOCwxNzBjLTIwLDAtMzYtOC0zNi04czgtMTYsMzYtMTZzMzYsMTYsMzYsMTZTMTQ4LDE3MCwxMjgsMTcwWiIgZmlsbD0iIzQ0NCIvPjxwYXRoIGQ9Ik04NSwxNDBjMCwwLTEwLDEwLTI1LDEwcy0yNSwtOC0yNSwtOHM1LC0xMCwyNSwtMTBTODUsMTQwLDg1LDE0MFoiIGZpbGw9IiNmYWQyZDIiLz48cGF0aCBkPSJNMTcxLDE0MGMwLDAsMTAsMTAsMjUsMTBzMjUsLTgsMjUsLThzLTUsLTEwLC0yNSwtMTBTMTcxLDE0MCwxNzEsMTQwWiIgZmlsbD0iI2ZhZDJkMiIvPjwvc3ZnPg==" alt="BullyBank Logo" class="logo">-->
+<!--                <img src="https://i.ibb.co/Nd1mmfK0/Minimalist-Material-Design-web-app-icon-featuring-a-stylized-bulldog-head-front-view-The-head-is-a.png" alt="BullyBank Logo" class="logo">-->
+<!--                <h1>BullyBank</h1>-->
+<!--            </div>-->
+<!--            <div class="theme-toggle">-->
+<!--                <label for="theme-switch">Tema</label>-->
+<!--                <input type="checkbox" id="theme-switch" class="theme-switch">-->
+<!--            </div>-->
+<!--        </header>-->
         
         <!-- Navigazione tra le sezioni -->
         <nav class="app-nav">
