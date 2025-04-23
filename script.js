@@ -535,7 +535,7 @@ function updateCategoriesUI() {
     // Svuota il container completamente
     categorieContainer.innerHTML = '';
 
-    // Aggiungi chip "Tutte"
+    // Aggiungi chip "Tutte" per prima
     const allChip = document.createElement('div');
     allChip.className = 'chip active';
     allChip.setAttribute('data-categoria', 'tutte');
@@ -547,8 +547,8 @@ function updateCategoriesUI() {
     });
     categorieContainer.appendChild(allChip);
 
-    // Aggiungi chip per ogni categoria
-    categories.forEach(category => {
+    // Aggiungi chip per ogni categoria in ordine alfabetico
+    sortedCategories.forEach(category => {
         const chip = document.createElement('div');
         chip.className = 'chip';
         chip.setAttribute('data-categoria', category.id);
