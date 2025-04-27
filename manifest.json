@@ -2,11 +2,11 @@
   "name": "BullyBank - Gestione Risparmi",
   "short_name": "BullyBank",
   "description": "Applicazione per la gestione personale dei risparmi e delle finanze",
-  "start_url": "index.html",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#F2F2F7",
-  "theme_color": "#007AFF",
   "orientation": "any",
+  "background_color": "#f2f2f7",
+  "theme_color": "#007aff",
   "icons": [
     {
       "src": "icons/icon-72x72.png",
@@ -56,5 +56,23 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "shortcuts": [
+    {
+      "name": "Aggiungi Movimento",
+      "short_name": "Nuovo Movimento",
+      "description": "Aggiungi un nuovo movimento di entrata o uscita",
+      "url": "./index.html?action=add-transaction",
+      "icons": [
+        {
+          "src": "icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "categories": ["finance", "productivity"],
+  "lang": "it-IT",
+  "dir": "ltr",
+  "prefer_related_applications": false
 }
