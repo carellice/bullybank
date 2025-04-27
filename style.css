@@ -1227,28 +1227,3 @@ body {
 .amount.censored span, .list-item-amount.censored span {
     display: none;
 }
-
-/* Fix per status bar iOS nella PWA */
-@supports (-webkit-touch-callout: none) {
-    /* Selettore specifico per Safari iOS */
-    .app-container {
-        /* Crea un'area in alto con lo stesso colore della status bar */
-        padding-top: env(safe-area-inset-top);
-    }
-
-    .app-header {
-        /* Posizione fissa per evitare che scorra con il contenuto */
-        position: fixed;
-        top: env(safe-area-inset-top);
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        /* Colore di sfondo identico a quello della app */
-        background-color: var(--background-color);
-    }
-
-    /* Aggiunge spazio in alto per compensare l'header fisso */
-    main {
-        padding-top: calc(var(--header-height) + env(safe-area-inset-top));
-    }
-}
