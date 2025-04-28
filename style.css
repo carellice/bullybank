@@ -1469,3 +1469,25 @@ body {
 .privacy-toggle:hover .privacy-icon {
     transform: rotate(10deg);
 }
+
+/* Impedisce la selezione del testo in tutta l'app */
+body {
+    -webkit-user-select: none;  /* Safari */
+    -ms-user-select: none;      /* IE 10+ e Edge */
+    user-select: none;          /* Standard */
+    cursor: default;
+}
+
+/* Permette la selezione del testo nei campi di input e textarea */
+input, textarea, [contenteditable="true"] {
+    -webkit-user-select: auto;  /* Safari */
+    -ms-user-select: auto;      /* IE 10+ e Edge */
+    user-select: auto;          /* Standard */
+    cursor: text;
+}
+
+/* Ripristina il cursore a mano per i pulsanti e gli elementi clickabili */
+button, .action-btn, .primary-btn, .secondary-btn, .danger-btn,
+.nav-btn, .tab-btn, .chip, .close-btn, .action-icon {
+    cursor: pointer;
+}
