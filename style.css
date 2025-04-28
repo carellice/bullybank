@@ -1377,3 +1377,25 @@ body {
         transform: translateY(0);
     }
 }
+
+/* Animazione per pulsanti */
+.action-btn, .primary-btn, .secondary-btn, .danger-btn {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.action-btn:active, .primary-btn:active, .secondary-btn:active, .danger-btn:active {
+    transform: scale(0.95);
+}
+
+/* Effetto hover migliorato */
+.action-btn:hover, .primary-btn:hover {
+    box-shadow: 0 5px 15px rgba(var(--primary-color-rgb), 0.3);
+}
+
+.secondary-btn:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.danger-btn:hover {
+    box-shadow: 0 5px 15px rgba(255, 59, 48, 0.3);
+}
