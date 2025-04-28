@@ -119,21 +119,21 @@ body {
 /* Media query per responsive design */
 @media (max-width: 768px) {
     .app-nav {
-        display: none; /* Nascondi nav standard su mobile */
+        display: block; /* Modifica: mostra nav standard anche su mobile */
     }
 
     .bottom-tab-bar {
-        display: flex; /* Mostra tab bar su mobile */
+        display: none; /* Modifica: nascondi completamente la bottom tab bar */
     }
 
-    .app-content {
-        /* Aumenta il padding in fondo per dare più spazio alla tab bar più alta */
-        padding-bottom: 100px; /* Aumentato da 80px */
+    /* Adatta lo stile della navigazione per renderla più compatta su mobile */
+    .app-nav ul {
+        padding: 0 5px;
     }
 
-    .app-footer {
-        /* Aumenta anche questo margine */
-        margin-bottom: 80px; /* Aumentato da 60px */
+    .nav-btn {
+        padding: 10px 0;
+        font-size: 0.85rem;
     }
 }
 
@@ -214,9 +214,9 @@ body {
     background-color: var(--card-background);
     box-shadow: 0 2px 5px var(--shadow-color);
     margin-bottom: 20px;
-    /* Aggiungi anche questa riga se necessario: */
-    margin-top: 0;
-    /* Opzionalmente, aggiungi un bordo sottile in alto se preferisci: */
+    position: sticky;
+    top: var(--header-height);
+    z-index: 90;
     border-top: 1px solid var(--border-color);
 }
 
@@ -815,11 +815,27 @@ body {
     .app-content {
         padding-bottom: 80px; /* Spazio per la tab bar */
     }
-    
+
     /* Rimuovi questo se hai già rimosso il footer originale */
     /* .app-footer {
         margin-bottom: 60px;
     } */
+
+    .app-nav {
+        top: var(--header-height);
+        margin-top: 0;
+        margin-bottom: 15px;
+        /* Rimuovi il bordo superiore su mobile */
+        border-top: none;
+        /* Opzionalmente, aggiungi un'ombra più definita per separare visivamente */
+        box-shadow: 0 3px 10px var(--shadow-color);
+    }
+
+    /* Se necessario, aggiustiamo anche l'header */
+    .app-header {
+        box-shadow: none; /* Rimuovi l'ombra dell'header */
+        border-bottom: 1px solid var(--border-color); /* Aggiungi un bordo sottile invece */
+    }
 }
 
 /* Logo fluttuante */
@@ -942,8 +958,11 @@ body {
 
 @media (max-width: 480px) {
     .app-header {
-        padding: 0 15px;
-        height: 50px;
+        height: 50px; /* Header più compatto */
+    }
+
+    .app-nav {
+        top: 50px; /* Aggiorna per corrispondere all'altezza dell'header su schermi piccoli */
     }
     
     .logo {
@@ -1490,4 +1509,93 @@ input, textarea, [contenteditable="true"] {
 button, .action-btn, .primary-btn, .secondary-btn, .danger-btn,
 .nav-btn, .tab-btn, .chip, .close-btn, .action-icon {
     cursor: pointer;
+}
+
+/* Stile aggiornato per i nav-btn con icone */
+.nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 12px 0;
+    width: 100%;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.nav-btn .tab-icon {
+    font-size: 1.3rem;
+    margin-bottom: 5px;
+    transition: transform 0.3s ease;
+}
+
+.nav-btn:hover .tab-icon {
+    transform: translateY(-3px);
+}
+
+.nav-btn.active {
+    color: var(--primary-color);
+}
+
+.nav-btn.active .tab-icon {
+    animation: tab-bounce-nav 0.5s ease;
+}
+
+@keyframes tab-bounce-nav {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.nav-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30%;
+    height: 3px;
+    background-color: var(--primary-color);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+/* Effetto click sui tab */
+.nav-btn:active .tab-icon {
+    transform: scale(0.9);
+}
+
+/* Per schermi molto piccoli, rendiamo i tab ancora più compatti */
+@media (max-width: 480px) {
+    .nav-btn {
+        padding: 8px 0;
+        font-size: 0.75rem;
+    }
+
+    .nav-btn .tab-icon {
+        font-size: 1.2rem;
+    }
+
+    .app-nav {
+        margin-bottom: 15px;
+    }
+}
+
+/* Migliora l'aspetto su tablet */
+@media (min-width: 481px) and (max-width: 768px) {
+    .nav-btn {
+        flex-direction: row;
+        justify-content: center;
+        padding: 12px 0;
+    }
+
+    .nav-btn .tab-icon {
+        margin-bottom: 0;
+        margin-right: 8px;
+    }
 }

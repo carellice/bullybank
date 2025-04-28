@@ -392,30 +392,49 @@ function openSection(sectionId) {
     sections.forEach(section => {
         section.classList.remove('active');
     });
-    
+
     // Deseleziona tutti i pulsanti
     const navButtons = document.querySelectorAll('.nav-btn');
     navButtons.forEach(btn => {
         btn.classList.remove('active');
     });
-    
+
     // Deseleziona tutte le tab
     const tabButtons = document.querySelectorAll('.tab-btn');
     tabButtons.forEach(btn => {
         btn.classList.remove('active');
     });
-    
+
     // Mostra sezione selezionata
     document.getElementById(sectionId).classList.add('active');
-    
+
     // Attiva il pulsante e la tab corrispondenti
     document.querySelector(`.nav-btn[data-target="${sectionId}"]`).classList.add('active');
     document.querySelector(`.tab-btn[data-target="${sectionId}"]`).classList.add('active');
-    
+
     // Aggiorna l'interfaccia in base alla sezione
     if (sectionId === 'dashboard') {
         updateDashboard();
     } else if (sectionId === 'spese-fisse') {
+        // Reimpostazione del filtro quando si entra nella sezione spese fisse
+        // Seleziona la categoria "tutte"
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        document.querySelector('.chip[data-categoria="tutte"]').classList.add('active');
+
+        // Pulisci anche il campo di ricerca se esiste
+        const searchInput = document.getElementById('search-spese');
+        if (searchInput) {
+            searchInput.value = '';
+            searchText = ''; // Assicurati che anche la variabile globale sia reimpostata
+
+            // Nascondi il pulsante di cancellazione
+            const clearButton = document.getElementById('clear-search');
+            if (clearButton) {
+                clearButton.style.display = 'none';
+            }
+        }
+
+        // Ora aggiorna la lista senza filtri
         updateSpeseFisseList();
     } else if (sectionId === 'transazioni') {
         updateTransazioniList();
