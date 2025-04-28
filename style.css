@@ -1276,3 +1276,46 @@ body {
     margin-bottom: 20px;
     box-shadow: 0 4px 12px var(--shadow-color);
 }
+
+/* Animazione per la tab bar */
+.tab-btn {
+    position: relative;
+    transition: color 0.3s ease;
+    overflow: hidden;
+}
+
+.tab-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background-color: var(--primary-color);
+    border-radius: 3px;
+    transform: translateX(-50%);
+    transition: width 0.3s ease;
+}
+
+.tab-btn.active::after {
+    width: 50%;
+}
+
+.tab-icon {
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+    transition: transform 0.3s ease;
+}
+
+.tab-btn:active .tab-icon {
+    transform: scale(0.9);
+}
+
+.tab-btn.active .tab-icon {
+    animation: tab-bounce 0.5s ease;
+}
+
+@keyframes tab-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
