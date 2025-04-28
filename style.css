@@ -1230,3 +1230,242 @@ body {
 .amount.censored span, .list-item-amount.censored span {
     display: none;
 }
+
+/* Stile per il campo di ricerca */
+.search-container {
+    margin: 20px 0;
+    position: relative;
+    width: 100%;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 40px 12px 15px;
+    border-radius: var(--button-border-radius);
+    border: 1px solid var(--border-color);
+    background-color: var(--card-background);
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.clear-search-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 5px;
+    display: none; /* Nascosto di default, visibile solo quando c'è testo */
+}
+
+.clear-search-btn:hover {
+    color: var(--danger-color);
+}
+
+/* Stile per i risultati di ricerca vuoti */
+.empty-search-result {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 20px;
+    background-color: var(--card-background);
+    border-radius: var(--card-border-radius);
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+/* Animazione per la tab bar */
+.tab-btn {
+    position: relative;
+    transition: color 0.3s ease;
+    overflow: hidden;
+}
+
+.tab-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background-color: var(--primary-color);
+    border-radius: 3px;
+    transform: translateX(-50%);
+    transition: width 0.3s ease;
+}
+
+.tab-btn.active::after {
+    width: 50%;
+}
+
+.tab-icon {
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+    transition: transform 0.3s ease;
+}
+
+.tab-btn:active .tab-icon {
+    transform: scale(0.9);
+}
+
+.tab-btn.active .tab-icon {
+    animation: tab-bounce 0.5s ease;
+}
+
+@keyframes tab-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+/* Miglioriamo le animazioni per i modali */
+.modal {
+    transition: background-color 0.3s ease;
+}
+
+.modal-content {
+    transform: translateY(20px);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+}
+
+.modal.open .modal-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Animazione per la chiusura */
+.modal.closing .modal-content {
+    transform: translateY(10px);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+@keyframes modal-appear {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Animazione per il cambio di sezioni */
+.section {
+    display: none;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.section.active {
+    display: block;
+    animation: section-appear 0.4s forwards;
+}
+
+@keyframes section-appear {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animazione per pulsanti */
+.action-btn, .primary-btn, .secondary-btn, .danger-btn {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.action-btn:active, .primary-btn:active, .secondary-btn:active, .danger-btn:active {
+    transform: scale(0.95);
+}
+
+/* Effetto hover migliorato */
+.action-btn:hover, .primary-btn:hover {
+    box-shadow: 0 5px 15px rgba(var(--primary-color-rgb), 0.3);
+}
+
+.secondary-btn:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.danger-btn:hover {
+    box-shadow: 0 5px 15px rgba(255, 59, 48, 0.3);
+}
+
+/* Animazioni migliorate per il toast */
+.toast {
+    transform: translateX(-50%) translateY(20px);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+}
+
+.toast.visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+@keyframes toast-pulse {
+    0% { transform: translateX(-50%) scale(1); }
+    10% { transform: translateX(-50%) scale(1.05); }
+    20% { transform: translateX(-50%) scale(1); }
+}
+
+/* Animazione per elementi lista */
+@keyframes list-item-appear {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.list li {
+    animation: list-item-appear 0.3s ease forwards;
+}
+
+/* Animazione per l'hover */
+.list li {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.list li:hover {
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+/* Animazione per il toggle privacy */
+.privacy-toggle {
+    transition: all 0.3s ease;
+}
+
+.privacy-toggle:hover {
+    transform: scale(1.1);
+}
+
+.privacy-toggle.active {
+    animation: lock-bounce 0.5s ease;
+}
+
+@keyframes lock-bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+.privacy-icon {
+    transition: transform 0.3s ease;
+}
+
+.privacy-toggle:hover .privacy-icon {
+    transform: rotate(10deg);
+}

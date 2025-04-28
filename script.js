@@ -25,6 +25,7 @@ let categories = [];
 let appData = {
     months: {}
 };
+let searchText = '';
 
 // Funzioni di inizializzazione
 function initTheme() {
@@ -292,6 +293,9 @@ function setupEventListeners() {
     document.getElementById('next-month').addEventListener('click', nextMonth);
     document.getElementById('prev-month-trans').addEventListener('click', prevMonth);
     document.getElementById('next-month-trans').addEventListener('click', nextMonth);
+
+    document.getElementById('search-spese').addEventListener('input', handleSearchInput);
+    document.getElementById('clear-search').addEventListener('click', clearSearch);
     
     document.getElementById('stipendio-amount').addEventListener('input', updateStipendioPreview);
     document.getElementById('risparmio-amount').addEventListener('input', updateStipendioPreview);
@@ -1233,71 +1237,12 @@ function sortSpeseFisse() {
 }
 
 function filterSpeseFisseByCategory(categoryId) {
-    const speseFisseList = document.getElementById('spese-fisse-list');
-    
-    // Mostra tutte le spese
-    if (categoryId === 'tutte') {
-        updateSpeseFisseList();
-        return;
-    }
-    
-    // Filtra spese
-    const filteredSpese = appData.speseFisse.filter(
-        spesa => spesa.category === categoryId
-    );
-    
-    // Svuota lista
-    speseFisseList.innerHTML = '';
-    
-    // Caso nessuna spesa nella categoria
-    if (filteredSpese.length === 0) {
-        const noSpese = document.createElement('li');
-        noSpese.textContent = 'Nessuna spesa fissa in questa categoria';
-        noSpese.style.textAlign = 'center';
-        noSpese.style.color = 'var(--text-secondary)';
-        speseFisseList.appendChild(noSpese);
-        return;
-    }
-    
-    // Popola lista con spese filtrate
-    filteredSpese.forEach((spesa, index) => {
-        const li = document.createElement('li');
-        
-        const category = categories.find(cat => cat.id === spesa.category) || 
-                         { name: 'Categoria eliminata', color: '#8E8E93' };
-        
-        // Trova l'indice reale nella lista non filtrata
-        const realIndex = appData.speseFisse.findIndex(
-            s => s.name === spesa.name && s.amount === spesa.amount && s.category === spesa.category
-        );
-        
-        li.innerHTML = `
-            <div class="list-item-info">
-                <div class="list-item-name">${spesa.name}</div>
-                <span class="list-item-category" style="background-color: ${category.color}; color: ${getContrastColor(category.color)}">${category.name}</span>
-            </div>
-            <div class="list-item-amount">${formatCurrency(spesa.amount)}</div>
-            <div class="list-item-actions">
-                <button class="action-icon edit-spesa" data-index="${realIndex}">✏️</button>
-                <button class="action-icon delete-spesa" data-index="${realIndex}">🗑️</button>
-            </div>
-        `;
-        
-        speseFisseList.appendChild(li);
-    });
-    
-    // Aggiungi listeners
-    document.querySelectorAll('.edit-spesa').forEach(btn => {
-        btn.addEventListener('click', () => editSpesaFissa(parseInt(btn.getAttribute('data-index'))));
-    });
-    
-    document.querySelectorAll('.delete-spesa').forEach(btn => {
-        btn.addEventListener('click', () => deleteSpesaFissa(parseInt(btn.getAttribute('data-index'))));
-    });
-    
-    // Aggiorna totale mostrato
-    const totalFilteredSpese = filteredSpese.reduce((sum, spesa) => sum + spesa.amount, 0);
-    document.getElementById('totale-spese-fisse').textContent = formatCurrency(totalFilteredSpese);
+    // Aggiorna la classe attiva per la chip selezionata
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    document.querySelector(`.chip[data-categoria="${categoryId}"]`).classList.add('active');
+
+    // Applica i filtri combinati
+    applyFilters();
 }
 
 // Funzioni per import/export e reset
@@ -1422,7 +1367,16 @@ function addTransazione(description, amount, type) {
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     modal.style.display = 'flex';
-    
+
+    // Rimuovi la classe di chiusura se presente
+    modal.classList.remove('closing');
+
+    // Aggiungi classe open per attivare l'animazione
+    // Piccolo trick: aspetta il prossimo frame per far scattare la transizione
+    setTimeout(() => {
+        modal.classList.add('open');
+    }, 10);
+
     // Posiziona il focus sul primo input
     const firstInput = modal.querySelector('input');
     if (firstInput) {
@@ -1432,35 +1386,59 @@ function openModal(modalId) {
 
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
-    modal.style.display = 'none';
-    
-    // Reset form
-    const form = modal.querySelector('form');
-    if (form) {
-        form.reset();
-        
-        // Rimuovi attributo data-edit-index se presente
-        if (form.hasAttribute('data-edit-index')) {
-            form.removeAttribute('data-edit-index');
+
+    // Aggiungi la classe di chiusura e rimuovi open
+    modal.classList.add('closing');
+    modal.classList.remove('open');
+
+    // Nascondi il modale dopo che l'animazione è completa
+    setTimeout(() => {
+        modal.style.display = 'none';
+        modal.classList.remove('closing');
+
+        // Reset form
+        const form = modal.querySelector('form');
+        if (form) {
+            form.reset();
+
+            // Rimuovi attributo data-edit-index se presente
+            if (form.hasAttribute('data-edit-index')) {
+                form.removeAttribute('data-edit-index');
+            }
         }
-    }
+    }, 300); // Tempo corrispondente alla durata dell'animazione
 }
 
 function showToast(message) {
     const toast = document.getElementById('toast-notification');
     const toastMessage = document.getElementById('toast-message');
-    
+
     toastMessage.textContent = message;
     toast.style.display = 'block';
-    
+
     // Reset animazione
-    toast.style.animation = 'none';
-    toast.offsetHeight; // Force reflow
-    toast.style.animation = 'toast-appear 0.3s, toast-disappear 0.3s 2.7s';
-    
+    toast.classList.remove('visible');
+
+    // Forza reflow
+    toast.offsetHeight;
+
+    // Avvia animazione
+    toast.classList.add('visible');
+
+    // Aggiungi un piccolo effetto pulsante per attirare l'attenzione
+    setTimeout(() => {
+        toast.style.animation = 'toast-pulse 1s ease';
+    }, 400);
+
     // Nascondi toast dopo 3 secondi
     setTimeout(() => {
-        toast.style.display = 'none';
+        toast.classList.remove('visible');
+
+        // Dopo che l'animazione di uscita è completa, nascondi l'elemento
+        setTimeout(() => {
+            toast.style.display = 'none';
+            toast.style.animation = '';
+        }, 300);
     }, 3000);
 }
 
@@ -1795,5 +1773,127 @@ function updateNotePreview() {
     } else {
         notePreview.textContent = note;
         notePreview.classList.add('has-content');
+    }
+}
+
+// Funzione per gestire l'input di ricerca
+function handleSearchInput(e) {
+    searchText = e.target.value.toLowerCase();
+    const clearButton = document.getElementById('clear-search');
+
+    // Mostra/nascondi il pulsante di cancellazione
+    if (searchText.length > 0) {
+        clearButton.style.display = 'block';
+    } else {
+        clearButton.style.display = 'none';
+    }
+
+    // Applica filtri combinati (ricerca + categoria)
+    applyFilters();
+}
+
+// Funzione per cancellare la ricerca
+function clearSearch() {
+    document.getElementById('search-spese').value = '';
+    searchText = '';
+    document.getElementById('clear-search').style.display = 'none';
+
+    // Applica filtri (solo categorie ora)
+    applyFilters();
+}
+
+// Funzione per applicare tutti i filtri combinati
+function applyFilters() {
+    // Ottieni la categoria selezionata
+    const selectedCategory = document.querySelector('.chip.active').getAttribute('data-categoria');
+
+    // Se non c'è testo di ricerca e la categoria è "tutte",
+    // semplicemente aggiorna tutta la lista
+    if (searchText === '' && selectedCategory === 'tutte') {
+        updateSpeseFisseList();
+        return;
+    }
+
+    // Altrimenti, filtriamo in base alla ricerca e alla categoria
+    filterSpeseFisseBySearchAndCategory(searchText, selectedCategory);
+}
+
+// Nuova funzione di filtro combinato per ricerca e categorie
+function filterSpeseFisseBySearchAndCategory(query, categoryId) {
+    const speseFisseList = document.getElementById('spese-fisse-list');
+
+    // Svuota lista
+    speseFisseList.innerHTML = '';
+
+    // Filtra spese in base a categoria e ricerca
+    let filteredSpese = [...appData.speseFisse];
+
+    // Filtro per categoria (se non è "tutte")
+    if (categoryId !== 'tutte') {
+        filteredSpese = filteredSpese.filter(spesa => spesa.category === categoryId);
+    }
+
+    // Filtro per testo di ricerca
+    if (query !== '') {
+        filteredSpese = filteredSpese.filter(spesa =>
+            spesa.name.toLowerCase().includes(query)
+        );
+    }
+
+    // Caso nessuna spesa corrisponde ai filtri
+    if (filteredSpese.length === 0) {
+        const noSpese = document.createElement('li');
+        noSpese.className = 'empty-search-result';
+        noSpese.textContent = 'Nessuna spesa corrisponde ai criteri di ricerca';
+        speseFisseList.appendChild(noSpese);
+
+        // Aggiorna totale mostrato a zero
+        document.getElementById('totale-spese-fisse').textContent = formatCurrency(0);
+        return;
+    }
+
+    // Popola lista con spese filtrate
+    filteredSpese.forEach((spesa) => {
+        const li = document.createElement('li');
+
+        const category = categories.find(cat => cat.id === spesa.category) ||
+            { name: 'Categoria eliminata', color: '#8E8E93' };
+
+        // Trova l'indice reale nella lista non filtrata
+        const realIndex = appData.speseFisse.findIndex(
+            s => s.name === spesa.name && s.amount === spesa.amount && s.category === spesa.category
+        );
+
+        li.innerHTML = `
+            <div class="list-item-info">
+                <div class="list-item-name">${spesa.name}</div>
+                <span class="list-item-category" style="background-color: ${category.color}; color: ${getContrastColor(category.color)}">${category.name}</span>
+            </div>
+            <div class="list-item-amount">${formatCurrency(spesa.amount)}</div>
+            <div class="list-item-actions">
+                <button class="action-icon edit-spesa" data-index="${realIndex}">✏️</button>
+                <button class="action-icon delete-spesa" data-index="${realIndex}">🗑️</button>
+            </div>
+        `;
+
+        speseFisseList.appendChild(li);
+    });
+
+    // Aggiungi listeners
+    document.querySelectorAll('.edit-spesa').forEach(btn => {
+        btn.addEventListener('click', () => editSpesaFissa(parseInt(btn.getAttribute('data-index'))));
+    });
+
+    document.querySelectorAll('.delete-spesa').forEach(btn => {
+        btn.addEventListener('click', () => deleteSpesaFissa(parseInt(btn.getAttribute('data-index'))));
+    });
+
+    // Aggiorna totale mostrato
+    const totalFilteredSpese = filteredSpese.reduce((sum, spesa) => sum + spesa.amount, 0);
+    document.getElementById('totale-spese-fisse').textContent = formatCurrency(totalFilteredSpese);
+
+    // Dopo aver aggiornato tutti i valori, riapplica la censura se necessario
+    if (privacyMode) {
+        updatePrivacyUI();
     }
 }
