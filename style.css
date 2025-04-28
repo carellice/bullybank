@@ -1417,3 +1417,29 @@ body {
     10% { transform: translateX(-50%) scale(1.05); }
     20% { transform: translateX(-50%) scale(1); }
 }
+
+/* Animazione per elementi lista */
+@keyframes list-item-appear {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.list li {
+    animation: list-item-appear 0.3s ease forwards;
+}
+
+/* Animazione per l'hover */
+.list li {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.list li:hover {
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px var(--shadow-color);
+}
