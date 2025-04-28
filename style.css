@@ -1399,3 +1399,21 @@ body {
 .danger-btn:hover {
     box-shadow: 0 5px 15px rgba(255, 59, 48, 0.3);
 }
+
+/* Animazioni migliorate per il toast */
+.toast {
+    transform: translateX(-50%) translateY(20px);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+}
+
+.toast.visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+@keyframes toast-pulse {
+    0% { transform: translateX(-50%) scale(1); }
+    10% { transform: translateX(-50%) scale(1.05); }
+    20% { transform: translateX(-50%) scale(1); }
+}

@@ -1412,18 +1412,33 @@ function closeModal(modalId) {
 function showToast(message) {
     const toast = document.getElementById('toast-notification');
     const toastMessage = document.getElementById('toast-message');
-    
+
     toastMessage.textContent = message;
     toast.style.display = 'block';
-    
+
     // Reset animazione
-    toast.style.animation = 'none';
-    toast.offsetHeight; // Force reflow
-    toast.style.animation = 'toast-appear 0.3s, toast-disappear 0.3s 2.7s';
-    
+    toast.classList.remove('visible');
+
+    // Forza reflow
+    toast.offsetHeight;
+
+    // Avvia animazione
+    toast.classList.add('visible');
+
+    // Aggiungi un piccolo effetto pulsante per attirare l'attenzione
+    setTimeout(() => {
+        toast.style.animation = 'toast-pulse 1s ease';
+    }, 400);
+
     // Nascondi toast dopo 3 secondi
     setTimeout(() => {
-        toast.style.display = 'none';
+        toast.classList.remove('visible');
+
+        // Dopo che l'animazione di uscita è completa, nascondi l'elemento
+        setTimeout(() => {
+            toast.style.display = 'none';
+            toast.style.animation = '';
+        }, 300);
     }, 3000);
 }
 
