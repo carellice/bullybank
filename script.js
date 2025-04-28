@@ -1367,7 +1367,16 @@ function addTransazione(description, amount, type) {
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     modal.style.display = 'flex';
-    
+
+    // Rimuovi la classe di chiusura se presente
+    modal.classList.remove('closing');
+
+    // Aggiungi classe open per attivare l'animazione
+    // Piccolo trick: aspetta il prossimo frame per far scattare la transizione
+    setTimeout(() => {
+        modal.classList.add('open');
+    }, 10);
+
     // Posiziona il focus sul primo input
     const firstInput = modal.querySelector('input');
     if (firstInput) {
@@ -1377,18 +1386,27 @@ function openModal(modalId) {
 
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
-    modal.style.display = 'none';
-    
-    // Reset form
-    const form = modal.querySelector('form');
-    if (form) {
-        form.reset();
-        
-        // Rimuovi attributo data-edit-index se presente
-        if (form.hasAttribute('data-edit-index')) {
-            form.removeAttribute('data-edit-index');
+
+    // Aggiungi la classe di chiusura e rimuovi open
+    modal.classList.add('closing');
+    modal.classList.remove('open');
+
+    // Nascondi il modale dopo che l'animazione è completa
+    setTimeout(() => {
+        modal.style.display = 'none';
+        modal.classList.remove('closing');
+
+        // Reset form
+        const form = modal.querySelector('form');
+        if (form) {
+            form.reset();
+
+            // Rimuovi attributo data-edit-index se presente
+            if (form.hasAttribute('data-edit-index')) {
+                form.removeAttribute('data-edit-index');
+            }
         }
-    }
+    }, 300); // Tempo corrispondente alla durata dell'animazione
 }
 
 function showToast(message) {

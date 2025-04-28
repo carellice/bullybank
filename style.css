@@ -1319,3 +1319,37 @@ body {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-5px); }
 }
+
+/* Miglioriamo le animazioni per i modali */
+.modal {
+    transition: background-color 0.3s ease;
+}
+
+.modal-content {
+    transform: translateY(20px);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+}
+
+.modal.open .modal-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Animazione per la chiusura */
+.modal.closing .modal-content {
+    transform: translateY(10px);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+@keyframes modal-appear {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
