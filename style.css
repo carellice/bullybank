@@ -1443,3 +1443,29 @@ body {
     transform: translateX(5px);
     box-shadow: 0 2px 8px var(--shadow-color);
 }
+
+/* Animazione per il toggle privacy */
+.privacy-toggle {
+    transition: all 0.3s ease;
+}
+
+.privacy-toggle:hover {
+    transform: scale(1.1);
+}
+
+.privacy-toggle.active {
+    animation: lock-bounce 0.5s ease;
+}
+
+@keyframes lock-bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+.privacy-icon {
+    transition: transform 0.3s ease;
+}
+
+.privacy-toggle:hover .privacy-icon {
+    transform: rotate(10deg);
+}
