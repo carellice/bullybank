@@ -1599,3 +1599,275 @@ button, .action-btn, .primary-btn, .secondary-btn, .danger-btn,
         margin-right: 8px;
     }
 }
+
+/* Stile per la schermata di login */
+.login-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--background-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.login-card {
+    background-color: var(--card-background);
+    border-radius: var(--card-border-radius);
+    padding: 30px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px var(--shadow-color);
+    text-align: center;
+}
+
+.login-logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+}
+
+.login-card h1 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.login-card h2 {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    font-weight: 400;
+}
+
+.login-description {
+    margin-bottom: 30px;
+    color: var(--text-secondary);
+}
+
+.google-login-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: #444;
+    border: 1px solid #ddd;
+    border-radius: var(--button-border-radius);
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.2s;
+}
+
+.google-login-btn:hover {
+    background-color: #f1f1f1;
+}
+
+.google-logo {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+}
+
+.login-footer {
+    margin-top: 30px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.dark-theme .google-login-btn {
+    background-color: #ffffff;
+    color: #444;
+}
+
+.sync-status {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    padding: 5px 10px;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.sync-icon {
+    animation: none;
+}
+
+.sync-status.syncing {
+    background-color: rgba(var(--primary-color-rgb), 0.1);
+}
+
+.sync-status.syncing .sync-icon {
+    animation: rotate 2s linear infinite;
+}
+
+.sync-status.error {
+    background-color: rgba(255, 59, 48, 0.1);
+}
+
+.sync-status.error .sync-icon,
+.sync-status.error .sync-text {
+    color: var(--danger-color);
+}
+
+.sync-status.success {
+    background-color: rgba(52, 199, 89, 0.1);
+}
+
+.sync-status.success .sync-icon,
+.sync-status.success .sync-text {
+    color: var(--success-color);
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.user-info {
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: var(--background-color);
+    border-radius: var(--button-border-radius);
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid var(--primary-color);
+}
+
+.user-details {
+    flex: 1;
+}
+
+#user-name {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.user-email {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* Stile base per l'indicatore di sincronizzazione */
+.sync-status {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    padding: 5px 10px;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+/* Nascondi il testo su schermi piccoli */
+@media (max-width: 768px) {
+    .desktop-only {
+        display: none;
+    }
+
+    .sync-status {
+        padding: 5px;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        justify-content: center;
+    }
+
+    .sync-icon {
+        font-size: 1.2rem; /* Icona leggermente più grande */
+    }
+
+    /* Rendi più compatta l'header su mobile */
+    .header-actions {
+        gap: 10px;
+    }
+}
+
+/* Tooltip per mostrare lo stato su mobile quando si passa sopra all'icona */
+@media (max-width: 768px) {
+    .sync-status {
+        position: relative;
+    }
+
+    .sync-status:hover::after {
+        content: attr(data-status);
+        position: absolute;
+        bottom: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--card-background);
+        color: var(--text-primary);
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+        box-shadow: 0 2px 5px var(--shadow-color);
+        z-index: 1000;
+    }
+}
+
+/* Stile per l'header senza il toggle del tema */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Rendi l'icona privacy più visibile */
+.privacy-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.privacy-toggle:hover {
+    background-color: rgba(var(--primary-color-rgb), 0.1);
+    color: var(--primary-color);
+}
+
+.privacy-toggle.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Responsività migliorata */
+@media (max-width: 480px) {
+    .app-header {
+        height: 50px;
+        padding: 0 15px;
+    }
+
+    .header-actions {
+        gap: 10px;
+    }
+}

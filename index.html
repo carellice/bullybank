@@ -16,6 +16,25 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
 </head>
 <body>
+
+    <!-- Schermata di login -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-card">
+            <img src="./icons/icon-512x512.png" alt="BullyBank Logo" class="login-logo">
+            <h1>BullyBank</h1>
+            <h2>Gestisci i tuoi risparmi</h2>
+
+            <p class="login-description">Effettua l'accesso per sincronizzare i tuoi dati nel cloud</p>
+
+            <button id="google-login-btn" class="google-login-btn">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1024px-Google_%22G%22_logo.svg.png" alt="Google" class="google-logo">
+                Accedi con Google
+            </button>
+
+            <p class="login-footer">I tuoi dati rimarranno al sicuro e privati</p>
+        </div>
+    </div>
+
     <div class="app-container">
         <!-- Header con logo e switch tema -->
         <div class="app-header">
@@ -24,13 +43,13 @@
                 <h1>BullyBank 1.1</h1>
             </div>
             <div class="header-actions">
+                <div class="sync-status" id="sync-status">
+                    <span class="sync-icon">🔄</span>
+                    <span class="sync-text desktop-only">Non sincronizzato</span>
+                </div>
                 <button id="privacy-toggle" class="privacy-toggle" title="Nascondi/Mostra importi">
                     <span class="privacy-icon">👁️</span>
                 </button>
-                <div class="theme-toggle">
-                    <label for="theme-switch">Tema</label>
-                    <input type="checkbox" id="theme-switch" class="theme-switch">
-                </div>
             </div>
         </div>
 <!--        <header class="app-header">-->
@@ -269,6 +288,23 @@
                                 <option value="dark">Scuro</option>
                                 <option value="auto">Auto (sistema)</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>Account Cloud</h3>
+                        <div class="user-info" id="user-info">
+                            <div class="user-profile">
+                                <img id="user-avatar" src="" alt="Avatar" class="user-avatar">
+                                <div class="user-details">
+                                    <p id="user-name">-</p>
+                                    <p id="user-email" class="user-email">-</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="settings-actions">
+                            <button class="primary-btn" id="sync-now-btn">Sincronizza Ora</button>
+                            <button class="danger-btn" id="logout-btn">Disconnetti</button>
                         </div>
                     </div>
                     
@@ -632,6 +668,9 @@
         </button>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
