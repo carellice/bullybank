@@ -1,5 +1,40 @@
+// Configurazione Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyBF86Rc7F40wNPABpFqdNYI4ZMLoflNoYY",
+    authDomain: "bullybank-d1430.firebaseapp.com",
+    projectId: "bullybank-d1430",
+    storageBucket: "bullybank-d1430.firebasestorage.app",
+    messagingSenderId: "1009938847726",
+    appId: "1:1009938847726:web:d49623b2e9b0c98a4760ff"
+};
+
+// Inizializza Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Riferimenti a servizi Firebase
+const db = firebase.firestore();
+const auth = firebase.auth();
+const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+// Variabile per tenere traccia dell'utente
+let currentUser = null;
+
 // Variabile per tenere traccia dello stato privacy
 let privacyMode = false;
+
+// Controlla se l'utente è già loggato all'avvio
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        currentUser = user;
+        console.log('Utente già loggato:', user.displayName);
+        hideLoginScreen();
+        checkAndLoadData();
+        updateUserInfo();
+    } else {
+        // Mostra schermata di login
+        showLoginScreen();
+    }
+});
 
 // Inizializzazione app
 document.addEventListener('DOMContentLoaded', function() {
@@ -27,69 +62,349 @@ let appData = {
 };
 let searchText = '';
 
+// Funzione per autenticare con Google
+function signInWithGoogle() {
+    // Aggiungi l'opzione di persistent per mantenere la sessione
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        .then(() => {
+            return auth.signInWithPopup(googleProvider)
+                .then((result) => {
+                    currentUser = result.user;
+                    showToast('Accesso effettuato');
+                    hideLoginScreen();
+                    checkAndLoadData();
+                })
+                .catch((error) => {
+                    console.error('Errore durante l\'accesso con Google:', error);
+                    showToast('Errore: ' + error.message);
+                });
+        });
+}
+
+// Funzione per disconnettersi
+function signOut() {
+    return auth.signOut()
+        .then(() => {
+            currentUser = null;
+            showToast('Disconnessione effettuata');
+            showLoginScreen();
+        })
+        .catch((error) => {
+            console.error('Errore durante la disconnessione:', error);
+            showToast('Errore: ' + error.message);
+        });
+}
+
+// Funzione per mostrare la schermata di login
+function showLoginScreen() {
+    const loginScreen = document.getElementById('login-screen');
+    const appContainer = document.querySelector('.app-container');
+
+    loginScreen.style.display = 'flex';
+    appContainer.style.display = 'none';
+}
+
+// Funzione per nascondere la schermata di login
+function hideLoginScreen() {
+    const loginScreen = document.getElementById('login-screen');
+    const appContainer = document.querySelector('.app-container');
+
+    loginScreen.style.display = 'none';
+    appContainer.style.display = 'flex';
+}
+
+// Funzione per salvare i dati su Firestore
+function saveToFirestore() {
+    if (!currentUser) {
+        showToast('Devi effettuare l\'accesso per salvare i dati');
+        return Promise.reject('Utente non autenticato');
+    }
+
+    setSyncStatus('syncing');
+
+    const userId = currentUser.uid;
+    const dataToSave = {
+        appData: appData,
+        categories: categories,
+        lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    return db.collection('users').doc(userId).set(dataToSave)
+        .then(() => {
+            setSyncStatus('success', 'Sincronizzato');
+            return true;
+        })
+        .catch(error => {
+            setSyncStatus('error', 'Errore');
+            console.error('Errore durante il salvataggio su Firestore:', error);
+            throw error;
+        });
+}
+
+// Funzione per caricare i dati da Firestore
+function loadFromFirestore() {
+    if (!currentUser) {
+        showToast('Devi effettuare l\'accesso per caricare i dati');
+        return Promise.reject('Utente non autenticato');
+    }
+
+    setSyncStatus('syncing', 'Caricamento...');
+
+    const userId = currentUser.uid;
+
+    return db.collection('users').doc(userId).get()
+        .then(doc => {
+            if (doc.exists) {
+                // Dati trovati su Firestore
+                const data = doc.data();
+
+                // Aggiorna i dati locali
+                appData = data.appData;
+                categories = data.categories;
+
+                // Salva i dati anche localmente
+                localStorage.setItem('bullybank-data', JSON.stringify(appData));
+                localStorage.setItem('bullybank-categories', JSON.stringify(categories));
+
+                // Aggiorna l'interfaccia
+                updateCategoriesUI();
+                updateMonthUI();
+                updateDashboard();
+                updateSpeseFisseList();
+                updateTransazioniList();
+
+                setSyncStatus('success', 'Dati caricati');
+
+                return true;
+            } else {
+                // Nessun dato trovato, carica i dati locali
+                loadData();
+                setSyncStatus('success', 'Dati locali');
+
+                // Fai un backup iniziale dei dati locali
+                saveToFirestore();
+
+                return false;
+            }
+        })
+        .catch(error => {
+            setSyncStatus('error', 'Errore');
+            console.error('Errore durante il caricamento da Firestore:', error);
+
+            // In caso di errore, carica i dati locali
+            loadData();
+
+            throw error;
+        });
+}
+
+// Funzione per verificare se ci sono dati più recenti nel cloud
+function checkAndLoadData() {
+    // Prima carica i dati locali
+    loadData();
+
+    // Poi verifica se ci sono dati nel cloud
+    loadFromFirestore()
+        .then(() => {
+            // Imposta la sincronizzazione in tempo reale
+            setupRealtimeSync();
+        })
+        .catch(error => {
+            console.error('Errore nel caricamento dati iniziale:', error);
+        });
+}
+
+// Funzione per configurare la sincronizzazione in tempo reale
+function setupRealtimeSync() {
+    if (!currentUser) return;
+
+    const userId = currentUser.uid;
+
+    // Ascolta modifiche nel database
+    const unsubscribe = db.collection('users').doc(userId)
+        .onSnapshot(doc => {
+            if (doc.exists) {
+                const data = doc.data();
+
+                // Ottieni l'ultimo aggiornamento locale
+                const lastLocalUpdate = appData.lastModified || '2000-01-01T00:00:00.000Z';
+
+                // Ottieni l'ultimo aggiornamento dal cloud
+                const lastServerUpdate = data.lastUpdate ? data.lastUpdate.toDate().toISOString() : '2000-01-01T00:00:00.000Z';
+
+                // Se i dati del cloud sono più recenti, aggiorna localmente
+                if (new Date(lastServerUpdate) > new Date(lastLocalUpdate)) {
+                    console.log('Dati cloud più recenti, aggiornamento in corso...');
+
+                    // Aggiorna i dati locali
+                    appData = data.appData;
+                    categories = data.categories;
+
+                    // Salva i dati localmente
+                    localStorage.setItem('bullybank-data', JSON.stringify(appData));
+                    localStorage.setItem('bullybank-categories', JSON.stringify(categories));
+
+                    // Aggiorna l'interfaccia solo se l'app è visibile
+                    if (document.visibilityState === 'visible') {
+                        updateCategoriesUI();
+                        updateMonthUI();
+                        updateDashboard();
+                        updateSpeseFisseList();
+                        updateTransazioniList();
+
+                        showToast('Dati sincronizzati dal cloud');
+                    }
+
+                    setSyncStatus('success', 'Sincronizzato');
+                }
+            }
+        }, error => {
+            console.error('Errore nella sincronizzazione in tempo reale:', error);
+            setSyncStatus('error', 'Errore sync');
+        });
+
+    // Salva la funzione di unsubscribe per poterla chiamare se necessario
+    window.unsubscribeFromFirestore = unsubscribe;
+}
+
+// Funzione per aggiornare lo stato di sincronizzazione
+function setSyncStatus(status, message) {
+    const syncStatus = document.getElementById('sync-status');
+    if (!syncStatus) return; // Previeni errori se l'elemento non esiste ancora
+
+    const syncText = syncStatus.querySelector('.sync-text');
+
+    syncStatus.className = 'sync-status';
+
+    // Testo predefinito per ogni stato
+    let defaultText = 'Non sincronizzato';
+    switch (status) {
+        case 'syncing':
+            defaultText = 'Sincronizzazione...';
+            syncStatus.classList.add('syncing');
+            break;
+        case 'success':
+            defaultText = 'Sincronizzato';
+            syncStatus.classList.add('success');
+            break;
+        case 'error':
+            defaultText = 'Errore di sincronizzazione';
+            syncStatus.classList.add('error');
+            break;
+    }
+
+    // Imposta il testo visualizzato
+    const displayText = message || defaultText;
+    syncText.textContent = displayText;
+
+    // Imposta l'attributo data-status per il tooltip su mobile
+    syncStatus.setAttribute('data-status', displayText);
+
+    // Reset dopo 3 secondi per 'success'
+    if (status === 'success') {
+        setTimeout(() => {
+            syncStatus.className = 'sync-status';
+            syncText.textContent = 'Sincronizzato';
+            syncStatus.setAttribute('data-status', 'Sincronizzato');
+        }, 3000);
+    }
+}
+
+// Funzione per aggiornare le informazioni utente
+function updateUserInfo() {
+    const userNameElement = document.getElementById('user-name');
+    const userEmailElement = document.getElementById('user-email');
+    const userAvatarElement = document.getElementById('user-avatar');
+
+    if (!userNameElement || !userEmailElement || !userAvatarElement) return;
+
+    if (currentUser) {
+        userNameElement.textContent = currentUser.displayName || 'Utente';
+        userEmailElement.textContent = currentUser.email;
+
+        // Imposta l'avatar dell'utente
+        if (currentUser.photoURL) {
+            userAvatarElement.src = currentUser.photoURL;
+            userAvatarElement.classList.remove('blank-avatar');
+        } else {
+            // Se non c'è foto profilo, usa l'icona di un profilo vuoto
+            userAvatarElement.src = './icons/blank-profile.svg'; // Useremo un SVG che creeremo
+            userAvatarElement.classList.add('blank-avatar');
+        }
+    } else {
+        userNameElement.textContent = '-';
+        userEmailElement.textContent = '-';
+        userAvatarElement.src = './icons/blank-profile.svg';
+        userAvatarElement.classList.add('blank-avatar');
+    }
+}
+
+// Controllo dello stato della connessione
+window.addEventListener('online', function() {
+    setSyncStatus('success', 'Online');
+
+    // Se l'utente è autenticato, sincronizza
+    if (currentUser) {
+        saveToFirestore();
+    }
+});
+
+window.addEventListener('offline', function() {
+    setSyncStatus('error', 'Offline');
+    showToast('Sei offline. Le modifiche verranno sincronizzate quando sarai online');
+});
+
 // Funzioni di inizializzazione
 function initTheme() {
-    const themeSwitch = document.getElementById('theme-switch');
     const themeSelect = document.getElementById('theme-select');
-    
+
     // Verifica se c'è una preferenza salvata
-    const savedTheme = localStorage.getItem('bullybank-theme');
-    
+    let savedTheme = localStorage.getItem('bullybank-theme');
+
+    // Se non c'è una preferenza salvata, imposta 'auto' come default
+    if (!savedTheme) {
+        savedTheme = 'auto';
+        localStorage.setItem('bullybank-theme', 'auto');
+    }
+
+    // Applica il tema in base alle preferenze
     if (savedTheme === 'dark' || (savedTheme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.body.classList.add('dark-theme');
-        themeSwitch.checked = true;
+    } else {
+        document.body.classList.remove('dark-theme');
     }
-    
+
     // Aggiorna il select nelle impostazioni
-    if (savedTheme) {
-        themeSelect.value = savedTheme;
-    }
-    
-    // Event listener per il toggle tema
-    themeSwitch.addEventListener('change', () => {
-        if (themeSwitch.checked) {
-            document.body.classList.add('dark-theme');
-            localStorage.setItem('bullybank-theme', 'dark');
-            themeSelect.value = 'dark';
-        } else {
-            document.body.classList.remove('dark-theme');
-            localStorage.setItem('bullybank-theme', 'light');
-            themeSelect.value = 'light';
-        }
-    });
-    
+    themeSelect.value = savedTheme;
+
     // Event listener per il select tema
     themeSelect.addEventListener('change', () => {
         const selectedTheme = themeSelect.value;
         localStorage.setItem('bullybank-theme', selectedTheme);
-        
+
         if (selectedTheme === 'dark' || (selectedTheme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.body.classList.add('dark-theme');
-            themeSwitch.checked = true;
         } else {
             document.body.classList.remove('dark-theme');
-            themeSwitch.checked = false;
         }
     });
-    
+
     // Listener per preferenze di sistema (se impostato su auto)
     if (savedTheme === 'auto') {
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
             if (e.matches) {
                 document.body.classList.add('dark-theme');
-                themeSwitch.checked = true;
             } else {
                 document.body.classList.remove('dark-theme');
-                themeSwitch.checked = false;
             }
         });
     }
 }
 
 function initApp() {
-    // Carica dati salvati
+    // Carica dati locali
     loadData();
-    
+
     // Inizializza categorie se non esistono
     if (!categories || categories.length === 0) {
         categories = [
@@ -102,7 +417,7 @@ function initApp() {
         ];
         saveCategories();
     }
-    
+
     // Inizializza spese fisse globali se non esistono
     if (!appData.speseFisse) {
         appData.speseFisse = [];
@@ -111,13 +426,13 @@ function initApp() {
 
     // Inizializza la modalità privacy
     initPrivacy();
-    
+
     // Aggiorna visualizzazione categorie
     updateCategoriesUI();
-    
+
     // Inizializza mese corrente se non esiste
     initCurrentMonthData();
-    
+
     // Aggiorna interfaccia con data corrente
     updateMonthUI();
 }
@@ -228,7 +543,18 @@ function initPrivacy() {
 
 function saveData() {
     try {
+        // Aggiungi il timestamp dell'ultima modifica
+        appData.lastModified = new Date().toISOString();
+
+        // Salva localmente
         localStorage.setItem('bullybank-data', JSON.stringify(appData));
+
+        // Salva su Firestore se l'utente è loggato
+        if (currentUser) {
+            saveToFirestore().catch(error => {
+                console.error('Errore nel backup su Firestore:', error);
+            });
+        }
     } catch (error) {
         console.error('Errore nel salvataggio dei dati:', error);
         showToast('Errore nel salvataggio dei dati');
@@ -237,7 +563,15 @@ function saveData() {
 
 function saveCategories() {
     try {
+        // Salva localmente
         localStorage.setItem('bullybank-categories', JSON.stringify(categories));
+
+        // Salva su Firestore se l'utente è loggato
+        if (currentUser) {
+            saveToFirestore().catch(error => {
+                console.error('Errore nel backup su Firestore:', error);
+            });
+        }
     } catch (error) {
         console.error('Errore nel salvataggio delle categorie:', error);
         showToast('Errore nel salvataggio delle categorie');
@@ -383,6 +717,31 @@ function setupEventListeners() {
     // Note mensili
     document.getElementById('edit-note').addEventListener('click', () => openNoteModal());
     document.getElementById('note-form').addEventListener('submit', handleNoteSubmit);
+
+    // Login con Google
+    document.getElementById('google-login-btn').addEventListener('click', signInWithGoogle);
+
+    // Logout
+    document.getElementById('logout-btn').addEventListener('click', function() {
+        if (confirm('Sei sicuro di voler disconnettere l\'account? I dati rimarranno sincronizzati.')) {
+            signOut();
+        }
+    });
+
+    // Sincronizzazione manuale
+    document.getElementById('sync-now-btn').addEventListener('click', function() {
+        if (currentUser) {
+            saveToFirestore()
+                .then(() => {
+                    showToast('Sincronizzazione completata');
+                })
+                .catch(error => {
+                    showToast('Errore nella sincronizzazione: ' + error.message);
+                });
+        } else {
+            showToast('Effettua l\'accesso per sincronizzare');
+        }
+    });
 }
 
 // Funzioni di navigazione
