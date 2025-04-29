@@ -325,14 +325,17 @@ function updateUserInfo() {
         // Imposta l'avatar dell'utente
         if (currentUser.photoURL) {
             userAvatarElement.src = currentUser.photoURL;
+            userAvatarElement.classList.remove('blank-avatar');
         } else {
-            // Avatar di default
-            userAvatarElement.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(currentUser.displayName || 'User') + '&background=random';
+            // Se non c'è foto profilo, usa l'icona di un profilo vuoto
+            userAvatarElement.src = './icons/blank-profile.svg'; // Useremo un SVG che creeremo
+            userAvatarElement.classList.add('blank-avatar');
         }
     } else {
         userNameElement.textContent = '-';
         userEmailElement.textContent = '-';
-        userAvatarElement.src = '';
+        userAvatarElement.src = './icons/blank-profile.svg';
+        userAvatarElement.classList.add('blank-avatar');
     }
 }
 
