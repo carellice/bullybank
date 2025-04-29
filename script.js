@@ -63,21 +63,39 @@ let appData = {
 let searchText = '';
 
 // Funzione per autenticare con Google
+// function signInWithGoogle() {
+//     Aggiungi l'opzione di persistent per mantenere la sessione
+    // auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+    //     .then(() => {
+    //         return auth.signInWithPopup(googleProvider)
+    //             .then((result) => {
+    //                 currentUser = result.user;
+    //                 showToast('Accesso effettuato');
+    //                 hideLoginScreen();
+    //                 checkAndLoadData();
+    //             })
+    //             .catch((error) => {
+    //                 console.error('Errore durante l\'accesso con Google:', error);
+    //                 showToast('Errore: ' + error.message);
+    //             });
+    //     });
+// }
+
+// Funzione per autenticare con Google
 function signInWithGoogle() {
-    // Aggiungi l'opzione di persistent per mantenere la sessione
-    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-        .then(() => {
-            return auth.signInWithPopup(googleProvider)
-                .then((result) => {
-                    currentUser = result.user;
-                    showToast('Accesso effettuato');
-                    hideLoginScreen();
-                    checkAndLoadData();
-                })
-                .catch((error) => {
-                    console.error('Errore durante l\'accesso con Google:', error);
-                    showToast('Errore: ' + error.message);
-                });
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    firebase.auth().signInWithPopup(provider)
+        .then((result) => {
+            // Login riuscito
+            currentUser = result.user;
+            this.updateLoginStatus(true);
+            this.showNotification('Successo', 'Accesso effettuato come ' + currentUser.displayName, 'success');
+        })
+        .catch((error) => {
+            // Errore login
+            console.error("Errore di autenticazione:", error);
+            this.showNotification('Errore', 'Accesso fallito: ' + error.message, 'error');
         });
 }
 
