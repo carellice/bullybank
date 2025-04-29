@@ -359,16 +359,23 @@ function initTheme() {
     const themeSelect = document.getElementById('theme-select');
 
     // Verifica se c'è una preferenza salvata
-    const savedTheme = localStorage.getItem('bullybank-theme');
+    let savedTheme = localStorage.getItem('bullybank-theme');
 
+    // Se non c'è una preferenza salvata, imposta 'auto' come default
+    if (!savedTheme) {
+        savedTheme = 'auto';
+        localStorage.setItem('bullybank-theme', 'auto');
+    }
+
+    // Applica il tema in base alle preferenze
     if (savedTheme === 'dark' || (savedTheme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.body.classList.add('dark-theme');
+    } else {
+        document.body.classList.remove('dark-theme');
     }
 
     // Aggiorna il select nelle impostazioni
-    if (savedTheme) {
-        themeSelect.value = savedTheme;
-    }
+    themeSelect.value = savedTheme;
 
     // Event listener per il select tema
     themeSelect.addEventListener('change', () => {
