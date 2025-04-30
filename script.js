@@ -24,6 +24,12 @@ let privacyMode = false;
 
 // Controlla se l'utente è già loggato all'avvio
 auth.onAuthStateChanged((user) => {
+    // Mostra il contenuto di login e nascondi lo spinner dopo la verifica
+    const showLoginContent = () => {
+        document.getElementById('auth-spinner').style.display = 'none';
+        document.getElementById('login-content').style.display = 'block';
+    };
+
     if (user) {
         currentUser = user;
         console.log('Utente già loggato:', user.displayName);
@@ -31,8 +37,9 @@ auth.onAuthStateChanged((user) => {
         checkAndLoadData();
         updateUserInfo();
     } else {
-        // Mostra schermata di login
+        // Mostra schermata di login con contenuto
         showLoginScreen();
+        showLoginContent(); // Mostra i contenuti del login dopo aver verificato che l'utente non è autenticato
     }
 });
 
@@ -83,6 +90,10 @@ let searchText = '';
 
 // Funzione per autenticare con Google
 function signInWithGoogle() {
+    // Nascondi il contenuto di login e mostra lo spinner durante il tentativo di accesso
+    document.getElementById('auth-spinner').style.display = 'flex';
+    document.getElementById('login-content').style.display = 'none';
+
     const provider = new firebase.auth.GoogleAuthProvider();
 
     firebase.auth().signInWithPopup(provider)
@@ -96,6 +107,10 @@ function signInWithGoogle() {
             // Errore login
             console.error("Errore di autenticazione:", error);
             this.showNotification('Errore', 'Accesso fallito: ' + error.message, 'error');
+
+            // Mostra nuovamente il contenuto di login in caso di errore
+            document.getElementById('auth-spinner').style.display = 'none';
+            document.getElementById('login-content').style.display = 'block';
         });
 }
 
