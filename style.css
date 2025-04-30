@@ -1892,3 +1892,41 @@ button, .action-btn, .primary-btn, .secondary-btn, .danger-btn,
 .dark-theme .blank-avatar {
     filter: invert(0.3); /* Leggera inversione colore per tema scuro */
 }
+
+/* Rendi scrollabile la lista delle categorie nel modale di gestione */
+#categories-management-list {
+    max-height: 300px; /* Altezza massima della lista */
+    overflow-y: auto; /* Abilita lo scrolling verticale quando necessario */
+    margin-bottom: 15px; /* Spazio tra la lista e il pulsante di aggiunta */
+}
+
+/* Assicurati che il modale non sia troppo grande su schermi piccoli */
+@media (max-height: 600px) {
+    .modal-content {
+        max-height: 80vh; /* 80% dell'altezza visibile */
+        overflow-y: auto; /* Abilita lo scrolling per il contenuto del modale */
+    }
+
+    #categories-management-list {
+        max-height: 200px; /* Altezza massima ridotta su schermi bassi */
+    }
+}
+
+/* Stile migliorato per lo scrollbar */
+#categories-management-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+#categories-management-list::-webkit-scrollbar-track {
+    background: var(--background-color);
+    border-radius: 10px;
+}
+
+#categories-management-list::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+}
+
+#categories-management-list::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
