@@ -20,18 +20,27 @@
     <!-- Schermata di login -->
     <div id="login-screen" class="login-screen">
         <div class="login-card">
-            <img src="./icons/icon-512x512.png" alt="BullyBank Logo" class="login-logo">
-            <h1>BullyBank</h1>
-            <h2>Gestisci i tuoi risparmi</h2>
+            <!-- Aggiungi questo div per lo spinner -->
+            <div id="auth-spinner" class="auth-spinner">
+                <div class="spinner"></div>
+                <p>Verifica autenticazione...</p>
+            </div>
 
-            <p class="login-description">Effettua l'accesso per sincronizzare i tuoi dati nel cloud</p>
+            <!-- Nascondi inizialmente il contenuto di login -->
+            <div id="login-content" style="display: none;">
+                <img src="./icons/icon-512x512.png" alt="BullyBank Logo" class="login-logo">
+                <h1>BullyBank</h1>
+                <h2>Gestisci i tuoi risparmi</h2>
 
-            <button id="google-login-btn" class="google-login-btn">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1024px-Google_%22G%22_logo.svg.png" alt="Google" class="google-logo">
-                Accedi con Google
-            </button>
+                <p class="login-description">Effettua l'accesso per sincronizzare i tuoi dati nel cloud</p>
 
-            <p class="login-footer">I tuoi dati rimarranno al sicuro e privati</p>
+                <button id="google-login-btn" class="google-login-btn">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1024px-Google_%22G%22_logo.svg.png" alt="Google" class="google-logo">
+                    Accedi con Google
+                </button>
+
+                <p class="login-footer">I tuoi dati rimarranno al sicuro e privati</p>
+            </div>
         </div>
     </div>
 
