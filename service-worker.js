@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bullybank-cache-v8';
+const CACHE_NAME = 'bullybank-cache-v9';
 const urlsToCache = [
     './',
     './index.html',

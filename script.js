@@ -101,12 +101,12 @@ function signInWithGoogle() {
             // Login riuscito
             currentUser = result.user;
             this.updateLoginStatus(true);
-            this.showNotification('Successo', 'Accesso effettuato come ' + currentUser.displayName, 'success');
+            alert('Accesso effettuato come ' + currentUser.displayName, 'success');
         })
         .catch((error) => {
             // Errore login
             console.error("Errore di autenticazione:", error);
-            this.showNotification('Errore', 'Accesso fallito: ' + error.message, 'error');
+            alert('Errore: Accesso fallito: ' + error.message, 'error');
 
             // Mostra nuovamente il contenuto di login in caso di errore
             document.getElementById('auth-spinner').style.display = 'none';
@@ -672,7 +672,6 @@ function setupEventListeners() {
         openModal('modal-stipendio');
         updateStipendioPreview(); // Aggiorna l'anteprima all'apertura
     });
-    document.getElementById('sottrai-spendibili').addEventListener('click', () => openModal('modal-sottrai'));
     document.getElementById('manage-entrate').addEventListener('click', () => {
         updateEntrateExtraList();
         openModal('modal-gestione-entrate');
@@ -681,7 +680,6 @@ function setupEventListeners() {
         updateDebitiList();
         openModal('modal-gestione-debiti');
     });
-    document.getElementById('aggiungi-spendibili').addEventListener('click', () => openModal('modal-aggiungi-spendibili'));
     
     // Spese fisse
     document.getElementById('add-spesa-fissa').addEventListener('click', () => openModal('modal-spesa-fissa'));
