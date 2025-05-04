@@ -124,7 +124,7 @@ function signOut() {
         })
         .catch((error) => {
             console.error('Errore durante la disconnessione:', error);
-            showToast('Errore: ' + error.message);
+            // showToast('Errore: ' + error.message);
         });
 }
 
