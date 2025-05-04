@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bullybank-cache-v9';
+const CACHE_NAME = 'bullybank-cache-v10'; // Incrementa la versione
 const urlsToCache = [
     './',
     './index.html',
@@ -14,7 +14,7 @@ const urlsToCache = [
     './icons/icon-512x512.png'
 ];
 
-// Installazione del Service Worker
+// Installazione del Service Worker (manteniamo questa parte)
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
@@ -25,7 +25,7 @@ self.addEventListener('install', event => {
     );
 });
 
-// Attivazione del Service Worker
+// Attivazione del Service Worker (manteniamo questa parte)
 self.addEventListener('activate', event => {
     const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
@@ -41,33 +41,42 @@ self.addEventListener('activate', event => {
     );
 });
 
-// Gestione delle richieste di rete
+// Gestione delle richieste di rete - MODIFICATA per preferire sempre la rete
 self.addEventListener('fetch', event => {
     event.respondWith(
-        caches.match(event.request)
+        // Prima prova a prendere dalla rete
+        fetch(event.request)
             .then(response => {
-                // Ritorna la risposta dalla cache, se presente
-                if (response) {
+                // Se la risposta è valida, clonala per metterla in cache
+                if (!response || response.status !== 200 || response.type !== 'basic') {
                     return response;
                 }
 
-                // Altrimenti, recupera dalla rete
-                return fetch(event.request)
+                const responseToCache = response.clone();
+                caches.open(CACHE_NAME)
+                    .then(cache => {
+                        cache.put(event.request, responseToCache);
+                    });
+
+                return response;
+            })
+            .catch(error => {
+                // Solo in caso di errore di rete, prova a usare la cache
+                console.log('Errore di rete, tentativo di recupero dalla cache:', error);
+                return caches.match(event.request)
                     .then(response => {
-                        // Controlla se la risposta è valida
-                        if (!response || response.status !== 200 || response.type !== 'basic') {
+                        if (response) {
                             return response;
                         }
 
-                        // Clona la risposta per poterla usare sia per la cache che per il browser
-                        const responseToCache = response.clone();
-
-                        caches.open(CACHE_NAME)
-                            .then(cache => {
-                                cache.put(event.request, responseToCache);
-                            });
-
-                        return response;
+                        // Se non c'è nulla in cache, mostra un errore
+                        return new Response('Internet non disponibile. Non è possibile utilizzare l\'app offline.', {
+                            status: 503,
+                            statusText: 'Service Unavailable',
+                            headers: new Headers({
+                                'Content-Type': 'text/plain'
+                            })
+                        });
                     });
             })
     );

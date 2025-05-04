@@ -45,6 +45,10 @@ auth.onAuthStateChanged((user) => {
 
 // Inizializzazione app
 document.addEventListener('DOMContentLoaded', function() {
+    if (!navigator.onLine) {
+        showOfflineMessage();
+    }
+
     // Impostazione tema
     initTheme();
     
@@ -106,7 +110,7 @@ function signInWithGoogle() {
         .catch((error) => {
             // Errore login
             console.error("Errore di autenticazione:", error);
-            alert('Errore: Accesso fallito: ' + error.message, 'error');
+            // alert('Errore: Accesso fallito: ' + error.message, 'error');
 
             // Mostra nuovamente il contenuto di login in caso di errore
             document.getElementById('auth-spinner').style.display = 'none';
@@ -375,6 +379,7 @@ function updateUserInfo() {
 // Controllo dello stato della connessione
 window.addEventListener('online', function() {
     setSyncStatus('success', 'Online');
+    hideOfflineMessage();
 
     // Se l'utente è autenticato, sincronizza
     if (currentUser) {
@@ -384,8 +389,38 @@ window.addEventListener('online', function() {
 
 window.addEventListener('offline', function() {
     setSyncStatus('error', 'Offline');
-    showToast('Sei offline. Le modifiche verranno sincronizzate quando sarai online');
+    showOfflineMessage();
 });
+
+// Funzione per mostrare il messaggio offline
+function showOfflineMessage() {
+    // Verifica se l'elemento esiste già
+    let offlineMsg = document.getElementById('offline-message');
+
+    if (!offlineMsg) {
+        // Crea l'elemento se non esiste
+        offlineMsg = document.createElement('div');
+        offlineMsg.id = 'offline-message';
+        offlineMsg.innerHTML = `
+            <div class="offline-content">
+                <span class="offline-icon">📶</span>
+                <span>Connessione internet non disponibile. L'app richiede una connessione per funzionare correttamente.</span>
+            </div>
+        `;
+        document.body.appendChild(offlineMsg);
+    }
+
+    // Mostra il messaggio
+    offlineMsg.style.display = 'block';
+}
+
+// Funzione per nascondere il messaggio offline
+function hideOfflineMessage() {
+    const offlineMsg = document.getElementById('offline-message');
+    if (offlineMsg) {
+        offlineMsg.style.display = 'none';
+    }
+}
 
 // Funzioni di inizializzazione
 function initTheme() {
