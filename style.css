@@ -1959,29 +1959,3 @@ button, .action-btn, .primary-btn, .secondary-btn, .danger-btn,
         transform: rotate(360deg);
     }
 }
-
-/* Stile per il messaggio offline */
-#offline-message {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: var(--danger-color);
-    color: white;
-    z-index: 1000;
-    padding: 10px;
-    text-align: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    display: none;
-}
-
-.offline-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-.offline-icon {
-    font-size: 1.2rem;
-}
