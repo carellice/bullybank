@@ -101,12 +101,12 @@ function signInWithGoogle() {
             // Login riuscito
             currentUser = result.user;
             this.updateLoginStatus(true);
-            alert('Accesso effettuato come ' + currentUser.displayName, 'success');
+            // alert('Accesso effettuato come ' + currentUser.displayName, 'success');
         })
         .catch((error) => {
             // Errore login
             console.error("Errore di autenticazione:", error);
-            alert('Errore: Accesso fallito: ' + error.message, 'error');
+            // alert('Errore: Accesso fallito: ' + error.message, 'error');
 
             // Mostra nuovamente il contenuto di login in caso di errore
             document.getElementById('auth-spinner').style.display = 'none';
