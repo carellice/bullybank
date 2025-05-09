@@ -91,7 +91,7 @@ Per utilizzarla:
 2. Apri il file nel tuo browser preferito
 3. Inizia a gestire i tuoi risparmi!
 
-E' anche disponibile su GitHub Pages: [BullyBank](https://carellice.github.io/bullybank/).
+E' anche disponibile pubblicato: [BullyBank](https://appbullybank.netlify.app/).
 
 ## Sicurezza e privacy
 
